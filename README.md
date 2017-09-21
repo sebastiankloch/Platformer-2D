@@ -1,7 +1,9 @@
 # Platformer-2D 
 <p align="center">
 <i>Gameplay preview</i>
-<img src="images/LoH Beta 0_1_1_2 preview part 1.gif" alt="beta part 1" align="bottom"><br>
+</p>
+<p align="center">
+<img src="images/LoH Beta 0_1_1_2 preview part 1.gif" alt="beta part 1"><br>
 <img src="images/LoH Beta 0_1_1_2 preview part 2.gif" alt="beta part 1">
 </p>
 <br>
