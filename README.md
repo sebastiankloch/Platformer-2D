@@ -34,4 +34,5 @@ Main target of player supposed to be running away from lava. So our hero needed 
 <p align="center">
 <img src="images/LoH alpha 0_0_0_3 preview.gif" alt="alpha" >
 </p>
-text
+After designing first levels turned out that levels with narrow vertical shafts are monotonous. Jumping from left to right and vice versa
+wasn't interesting.
