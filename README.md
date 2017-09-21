@@ -38,7 +38,7 @@ Main target of player supposed to be running away from magma. So our hero needed
 After designing first levels turned out that levels with narrow vertical shafts are monotonous. Jumping from left to right and vice versa wasn't interesting. So we decided that there must be done some changes. We thought about adding special key which could open shorter paths to gain more time, but that was still without potential. So we changed story.
 <p>
 
-Now game supposed to be about young man who works in geothermal power station near Earth's core. Again something went wrong and hero must run. But this time he must slow dawn magma to allow evacuate people living underground, but that was still not enough.  
+Now game supposed to be about young man who works in geothermal power station near Earth's core. Again something went wrong and hero must run. But this time he must slow down magma to allow evacuate people living underground, but that was still not enough.  
 </p>
 <p>
 So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma when 
