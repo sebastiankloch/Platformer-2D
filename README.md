@@ -20,13 +20,18 @@ And now action of game could start.
 <p align="center">
 <img src="images/First idea preview.gif" alt="alpha" >
 </p>
-
-
-
+<h3>Gameplay</h3>
+Main target of player supposed to be running away from lava. So our hero needed some climbing skills, because he had to move up to escape.
 <p align="center">
 <i>First playable version of game</i>
 </p>
 <p align="center">
 <img src="images/LoH alpha 0_0_0_1 preview.gif" alt="alpha" >
+</p>
+<p align="center">
+<i>Expanded system of movement</i>
+</p>
+<p align="center">
+<img src="images/LoH alpha 0_0_0_3 preview.gif" alt="alpha" >
 </p>
 text
