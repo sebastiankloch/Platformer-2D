@@ -5,7 +5,7 @@ Gameplay preview
 </p>
 Link to installation file  
 Modify Ease and Hard scene <br>
-# Idea
+# Idea<br>
 First idea was that game will be about a half-god who takes care of a monstrous furnace in the Earth's core.
 Some day something could go wrong and furnace got too much carbon and that begun main core meltdown.
 And now action of game could start.
