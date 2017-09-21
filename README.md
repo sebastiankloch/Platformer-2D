@@ -22,7 +22,7 @@ And now action of game could start.
 <img src="images/First idea preview.gif" alt="alpha" >
 </p>
 <h3>Gameplay</h3>
-Main target of player supposed to be running away from lava. So our hero needed some climbing skills, because he had to move up to escape.
+Main target of player supposed to be running away from magma. So our hero needed some climbing skills, because he had to move up to escape. At that day me planed to make this game as endles runner.
 <p align="center">
 <i>First playable version of game</i>
 </p>
@@ -35,5 +35,11 @@ Main target of player supposed to be running away from lava. So our hero needed 
 <p align="center">
 <img src="images/LoH alpha 0_0_0_3 preview.gif" alt="alpha" >
 </p>
-After designing first levels turned out that levels with narrow vertical shafts are monotonous. Jumping from left to right and vice versa
-wasn't interesting.
+After designing first levels turned out that levels with narrow vertical shafts are monotonous. Jumping from left to right and vice versa wasn't interesting. So we decided that there must be done some changes. We thought about adding special key which could open shorter paths to gain more time, but that was still without potential. So we changed story.
+<p>
+Now game supposed to be about young man who works in geothermal power station near Earth's core. Again something went wrong and hero must run. But this time he must slow dawn magma to allow evacuate people living underground, but that was still not enough.  
+</p>
+<p>
+So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma when 
+victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will be moving up unconscious victims. 
+</p>
