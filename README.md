@@ -4,7 +4,7 @@ Gameplay preview
 <img src="images/LoH Beta 0_1_1_2 preview part 1.gif" alt="beta part 1"><br>
 </p>
 Link to installation file  
-Modify Ease and Hard scene  
+Modify Ease and Hard scene <br>
 # Idea
 First idea was that game will be about a half-god who takes care of a monstrous furnace in the Earth's core.
 Some day something could go wrong and furnace got too much carbon and that begun main core meltdown.
