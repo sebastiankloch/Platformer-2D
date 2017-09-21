@@ -35,6 +35,9 @@ Main target of player supposed to be running away from magma. So our hero needed
 <p align="center">
 <img src="images/LoH alpha 0_0_0_3 preview.gif" alt="alpha" >
 </p>
+<p align="center">
+<img src="images/LoH ladders preview.gif" alt="alpha" >
+</p>
 After designing first levels turned out that levels with narrow vertical shafts are monotonous. Jumping from left to right and vice versa wasn't interesting. So we decided that there must be done some changes. We thought about adding special key which could open shorter paths to gain more time, but that was still without potential. So we changed story.
 <p>
 
