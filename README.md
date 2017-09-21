@@ -1,4 +1,5 @@
 # Platformer-2D 
+Project made by Sebastian Kloch and Rafał Kot
 <p align="center">
 <i>Gameplay preview</i>
 </p>
