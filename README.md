@@ -42,5 +42,5 @@ Now game supposed to be about young man who works in geothermal power station ne
 </p>
 <p>
 So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma when 
-victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will be moving up unconscious victims.
+victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will take unconscious victims.
 </p>
