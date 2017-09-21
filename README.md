@@ -24,6 +24,7 @@ And now action of game could start.
 <h3>Gameplay</h3>
 Main target of player supposed to be running away from magma. So our hero needed some climbing skills, because he had to move up to escape. At that day me planed to make this game as endles runner.
 <p align="center">
+
 <i>First playable version of game</i>
 </p>
 <p align="center">
