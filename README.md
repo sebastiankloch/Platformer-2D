@@ -114,3 +114,6 @@ There are also missions when we have to stop incendiary. Player has to avoid tra
 </p>
 
 <h2>Experience</h2>
+
+I(as Sebastian Kloch) little regret that we made this project bigger than we planed at first but I gained a lot experience not only about game development, but also about myself. At the beginning of project I was focused on vision of final version of game. I didn't enjoy development and because of that there where two big changes in games design. But after year of development I had enough skill in programming to start enjoying writing better and cleaner code.(I'm only at the beginning of learning how to write clean code).<br>
+This feeling is like you clean old rusty car which can drive, but looks awful and it is dificult to repair. When you become better and better every car you clean looks more beautiful and is easier to repair.
