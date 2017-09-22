@@ -110,5 +110,7 @@ To save more time we resigned from sandbox and focused more on missions. We also
 </p>
 <p>
 Now main target of player is not only survive but also save important persons. Saving other victims is optional, but there is reward for saving them.<br>
-There are also missions when we have to stop incendiary. Player has to avoid traps made by arsonist and at the end of mission he must decide if he wants arrest incendiary or let him die in flames.
+There are also missions when we have to stop incendiary. Player has to avoid traps made by arsonist and at the end of mission he must decide if he wants save incendiary or let him die in flames.
 </p>
+
+<h2>Experience</h2>
