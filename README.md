@@ -58,7 +58,26 @@ We wanted ability to use way around victims when player doesn't want to save vic
  - firefighter drone can extinguish fire in selected area.<br>
 But very important was to have at least simple conflangration system.
 </p>
-
 <p>
+After losing motivation to first idea we wanted make little sanbox game.
 We started prototyping.
+</p>
+<p align="center">
+<i>Conflangration based on unity colliders<br>
+and test of walls with alpha
+</i>
+</p>
+<p align="center">
+<img src="images/Loh sandbox protype 1.gif" alt="sandbox" >
+</p>
+<p align="center">
+<i>Extinction test</i>
+</p>
+<p align="center">
+<img src="images/LoH sandbox protype 2.gif" alt="sandbox" >
+</p>
+<p>
+During tests at bigger scale turned out that it is imposible to do conflangration with scale that we wanted.<br>
+We made conflangration in sandbox only as information for player that in this bulding is conflangration.<br>
+We moved real conflangration to separate scene, but there where still recurrence of building construction.
 </p>
