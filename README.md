@@ -46,5 +46,8 @@ Now game supposed to be about young man who works in geothermal power station ne
 </p>
 <p>
 So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma when 
-victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will take unconscious victims. But at that day we wanted to make manual calling of drones so player would have to call drones, go slow down magma, back and call another drones and again slow down magma
+victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will take unconscious victims. But at that day we wanted to make manual calling of drones so player would have to call drones, go slow down magma, back and call another drones and again slow down magma. This could be too repeatable and because of that we changed again assumptions.
+</p>
+<p>
+Current story is about firefighter, who works in underground cites after The Great War ,when surface of earth is poisoned by toxic gases. Action takes place in main vent of yellowstone volcano after colling down of earth core as a result of the massive use of geothermal energy during war.
 </p>
