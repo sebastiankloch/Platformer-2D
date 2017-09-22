@@ -59,9 +59,10 @@ We wanted ability to use way around victims when player doesn't want to save vic
 But very important was to have at least simple conflangration system.
 </p>
 <p>
-After losing motivation to first idea we wanted make little sanbox game.
+After losing motivation to first idea we wanted to make little sanbox game.
 We started prototyping.
 </p>
+
 <p align="center">
 <i>Conflangration based on unity colliders<br>
 and test of walls with alpha
@@ -76,8 +77,14 @@ and test of walls with alpha
 <p align="center">
 <img src="images/LoH sandbox protype 2.gif" alt="sandbox" >
 </p>
+
 <p>
 During tests at bigger scale turned out that it is imposible to do conflangration with scale that we wanted.<br>
-We made conflangration in sandbox only as information for player that in this bulding is conflangration.<br>
-We moved real conflangration to separate scene, but there where still recurrence of building construction.
+We made flames in sandbox only as information for player that in this bulding is conflangration.<br>
+We moved real fire to separate scene, but there where still recurrence of building construction.
+</p>
+
+<p>
+To save more time we resigned from sandbox and focused more on missions.<br>
+We also resigned from endless runner form.
 </p>
