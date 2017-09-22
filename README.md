@@ -129,3 +129,7 @@ Main source of knowledge how I should write my scripts was every code I had cont
 But there were problem with that I had to work on my project so my skills are still on not satisfactory level.<br>
 Now near the end of project I see how bad my first code is, but I'm happy that I have idea how it should be written.
 </p>
+<p>
+Congratulations for the fact that you managed to reach the end.<br>
+Thanks for reading
+</p>
