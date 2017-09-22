@@ -85,6 +85,26 @@ We moved real fire to separate scene, but there where still recurrence of buildi
 </p>
 
 <p>
-To save more time we resigned from sandbox and focused more on missions.<br>
-We also resigned from endless runner form.
+To save more time we resigned from sandbox and focused more on missions. We also resigned from endless runner form.<br>
+</p>
+
+<p align="center">
+<i>We rewrited all conflangration scripts using our own collision system</i>
+</p>
+<p align="center">
+<img src="images/LoH conflangration preview.gif" alt="sandbox" >
+</p>
+
+<p align="center">
+<i>We added tiles object pooling</i>
+</p>
+<p align="center">
+<img src="images/LoH tiles pooling.gif" alt="sandbox" >
+</p>
+
+<p align="center">
+<i>We added colliders pooling</i>
+</p>
+<p align="center">
+<img src="images/LoH colliders pooling.gif" alt="sandbox" >
 </p>
