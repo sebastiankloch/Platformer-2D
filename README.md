@@ -45,14 +45,14 @@ After designing first levels turned out that levels with narrow vertical shafts 
 Now game supposed to be about young man who works in geothermal power station near Earth's core. Again something went wrong and hero must run. But this time he must slow down magma to allow evacuate people living underground, but that was still not enough.  
 </p>
 <p>
-So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma when 
+So there showed up idea about adding victims that during evacuation couldn't escape. Main task of player was to slow down magma, when 
 victims will running away. But there wasn't many ways to add upgrades or any other solution to increase monetization of our game. So why don't add drones which will take unconscious victims. But at that day we wanted to make manual calling of drones so player would have to call drones, go slow down magma, back and call another drones and again slow down magma. This could be too repeatable and because of that we changed again assumptions.
 </p>
 <p>
-Current story is about firefighter, who works in underground cites after The Great War ,when surface of earth is poisoned by toxic gases. Action takes place in main vent of yellowstone volcano after colling down of earth core as a result of the massive use of geothermal energy during war.
+Current story is about firefighter, who works in underground cites after The Great War, when surface of earth is poisoned by toxic gases. Action takes place in main vent of yellowstone volcano after colling down of earth core as a result of the massive use of geothermal energy during war.
 </p>
 <p>
-We wanted ability to use way around victims when player doesn't want to save victims, or simple hasn't enough upgraded drones and this is too difficult for player. Player has ability too call three types of drones: ambulance, supply, firefighter.<br>
+We wanted ability to use way around victims, when player doesn't want to save victims, or simple hasn't enough upgraded drones and this is too difficult for player. Player has ability too call three types of drones: ambulance, supply, firefighter.<br>
  - ambulance drone can take victims from danger area.<br>
  - supply drone can give hero pack of ammo, bandages and other stuff.<br>
  - firefighter drone can extinguish fire in selected area.<br>
