@@ -51,3 +51,14 @@ victims will running away. But there wasn't many ways to add upgrades or any oth
 <p>
 Current story is about firefighter, who works in underground cites after The Great War ,when surface of earth is poisoned by toxic gases. Action takes place in main vent of yellowstone volcano after colling down of earth core as a result of the massive use of geothermal energy during war.
 </p>
+<p>
+We wanted ability to use way around victims when player doesn't want to save victims, or simple hasn't enough upgraded drones and this is too difficult for player. Player has ability too call three types of drones: ambulance, supply, firefighter.<br>
+ - ambulance drone can take victims from danger area.<br>
+ - supply drone can give hero pack of ammo, bandages and other stuff.<br>
+ - firefighter drone can extinguish fire in selected area.<br>
+But very important was to have at least simple conflangration system.
+</p>
+
+<p>
+We started prototyping.
+</p>
