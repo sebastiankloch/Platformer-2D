@@ -131,5 +131,5 @@ Now near the end of project I see how bad my first code is, but I'm happy that I
 </p>
 <p>
 Congratulations for the fact that you managed to reach the end.<br>
-Thanks for reading
+Thanks for reading!
 </p>
