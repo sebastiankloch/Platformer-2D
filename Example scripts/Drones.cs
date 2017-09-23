@@ -11,64 +11,64 @@ namespace Drones
     [Serializable]
     public class Stats
     {
-        public int _id;
-        public int _strength;
-        public float _speed;
-        public float _coolDownTime;
+        public int id;
+        public int strength;
+        public float speed;
+        public float coolDownTime;
 
-        public bool _readyToAction = true;
-        public bool _inUse = false;
-        public bool _destroyed = false;
+        public bool readyToAction = true;
+        public bool inUse = false;
+        public bool destroyed = false;
 
-        public Stats(int _id, int strength, float speed, float coolDownTime )
+        public Stats( int id, int strength, float speed, float coolDownTime )
         {
-            this._id = _id;
-            _strength = strength;
-            _speed = speed;
-            _coolDownTime = coolDownTime;
+            this.id = id;
+            strength = strength;
+            speed = speed;
+            coolDownTime = coolDownTime;
         }
 
-        public void _TakeDamage( int __damage )
+        public void TakeDamage( int damage )
         {
-            _strength -= __damage;
-            if ( _strength <= 0 )
-                _destroyed = true;
+            strength -= damage;
+            if ( strength <= 0 )
+                destroyed = true;
         }
     }
 
     [Serializable]
     public class FirefiStats : Stats
     {
-        
-        public float _extSize;
-        public int _ammo;
 
-        public FirefiStats( int _id, int strength, float speed, float coolDownTime, float extSize, int ammo ) : base( _id, strength, speed, coolDownTime )
+        public float extSize;
+        public int ammo;
+
+        public FirefiStats( int id, int strength, float speed, float coolDownTime, float extSize, int ammo ) : base( id, strength, speed, coolDownTime )
         {
-            _extSize = extSize;
-            _ammo = ammo;
+            extSize = extSize;
+            ammo = ammo;
         }
     }
 
     [Serializable]
     public class AmbStats : Stats
     {
-        public float _slowingDownDyingPer;
+        public float slowingDownDyingPer;
 
-        public AmbStats( int _id, int strength, float speed, float coolDownTime, float slowingDownDyingPer ) : base( _id, strength, speed, coolDownTime )
+        public AmbStats( int id, int strength, float speed, float coolDownTime, float slowingDownDyingPer ) : base( id, strength, speed, coolDownTime )
         {
-            _slowingDownDyingPer = slowingDownDyingPer;
+            slowingDownDyingPer = slowingDownDyingPer;
         }
     }
 
     [Serializable]
     public class SupStats : Stats
     {
-        public int _ammoPackStrength;
+        public int ammoPackStrength;
 
-        public SupStats( int _id, int strength, float speed, float coolDownTime, int ammoPackStrength ) : base( _id, strength, speed, coolDownTime )
+        public SupStats( int id, int strength, float speed, float coolDownTime, int ammoPackStrength ) : base( id, strength, speed, coolDownTime )
         {
-            _ammoPackStrength = ammoPackStrength;
+            ammoPackStrength = ammoPackStrength;
         }
     }
 
@@ -79,76 +79,76 @@ namespace Drones
     [Serializable]
     public struct BasicDroneLevels
     {
-        public int _availablePoints;
-        public int _ownedPoints;
+        public int availablePoints;
+        public int ownedPoints;
         [Space]
-        public int _armorLvl;
-        public int _maxArmorLvl;
+        public int armorLvl;
+        public int maxArmorLvl;
         [Space]
-        public int _speedLvl;
-        public int _maxSpeedLvl;
+        public int speedLvl;
+        public int maxSpeedLvl;
         [Space]
-        public int _maxShorteningTimeLevel;
-        public int _shorteningCoolingDownTimeLevel;
-        public int _shorteningTimeBaseCost;
-        public float _baseShorteningTime;
+        public int maxShorteningTimeLevel;
+        public int shorteningCoolingDownTimeLevel;
+        public int shorteningTimeBaseCost;
+        public float baseShorteningTime;
         [Space]
-        public int _engineLevel;
-        public int _maxEngineLvl;
-        public int _engineBaseCost;
-        public int _pointsPerEngineLvl;
+        public int engineLevel;
+        public int maxEngineLvl;
+        public int engineBaseCost;
+        public int pointsPerEngineLvl;
     }
 
     [Serializable]
     public struct FirefighterDroneLevels
     {
-        public int _ammoLvl;
-        public int _maxAmmo;
+        public int ammoLvl;
+        public int maxAmmo;
         [Space]
-        public int _sizeOfExtincionLvl;
-        public int _maxLvLOfSizeOfExtinction;
+        public int sizeOfExtincionLvl;
+        public int maxLvLOfSizeOfExtinction;
     }
 
     [Serializable]
     public struct AmbulanceDroneLevels
     {
-        public int _slowDownDyingLevel;
-        public int _maxSlowDownDecreasing;
+        public int slowDownDyingLevel;
+        public int maxSlowDownDecreasing;
     }
 
     [Serializable]
     public struct SupplyDroneLevels
     {
-        public int _sizeOfPackage;
-        public int _maxSizeOfPackage;
+        public int sizeOfPackage;
+        public int maxSizeOfPackage;
         [Space]
-        public int _armorOfPackage;
-        public int _maxArmorOfPackage;
+        public int armorOfPackage;
+        public int maxArmorOfPackage;
     }
 
     [Serializable]
     public struct DronesSkills
     {
-        public bool _extinctionOnReachingTargetIsActive;
-        public int _extinctionOnReachingTargetPointsCost;
-        public int _extinctionOnReachingTargetMoneyCost;
-        public bool _extinctionOnReachingTargetHasBeenBought;
+        public bool extinctionOnReachingTargetIsActive;
+        public int extinctionOnReachingTargetPointsCost;
+        public int extinctionOnReachingTargetMoneyCost;
+        public bool extinctionOnReachingTargetHasBeenBought;
     }
 
     [Serializable]
     public class UpgradesToSave
     {
-        public DroneFireFighterUpgrades _droneFireFighterUpgrades;
-        public DroneAmbulanceUpgrades _droneAmbulanceUpgrades;
-        public DroneSupplyUpgrades _droneSupplyUpgrades;
-        public FireBrigadeUpgrades _fireBrigadeUpgrades;
+        public DroneFireFighterUpgrades droneFireFighterUpgrades;
+        public DroneAmbulanceUpgrades droneAmbulanceUpgrades;
+        public DroneSupplyUpgrades droneSupplyUpgrades;
+        public FireBrigadeUpgrades fireBrigadeUpgrades;
 
         public UpgradesToSave( DroneFireFighterUpgrades droneFireFighterUpgrades, DroneAmbulanceUpgrades droneAmbulanceUpgrades, DroneSupplyUpgrades droneSupplyUpgrades, FireBrigadeUpgrades fireBrigadeUpgrades )
         {
-            _droneFireFighterUpgrades = droneFireFighterUpgrades;
-            _droneAmbulanceUpgrades = droneAmbulanceUpgrades;
-            _droneSupplyUpgrades = droneSupplyUpgrades;
-            _fireBrigadeUpgrades = fireBrigadeUpgrades;
+            droneFireFighterUpgrades = droneFireFighterUpgrades;
+            droneAmbulanceUpgrades = droneAmbulanceUpgrades;
+            droneSupplyUpgrades = droneSupplyUpgrades;
+            fireBrigadeUpgrades = fireBrigadeUpgrades;
         }
     }
     #endregion
@@ -156,8 +156,8 @@ namespace Drones
     [Serializable]
     public class DroneUpgrades
     {
-        protected BasicDroneLevels _basicDroneLvls = new BasicDroneLevels();
-        protected DronesSkills _droneSkills = new DronesSkills();
+        protected BasicDroneLevels basicDroneLvls = new BasicDroneLevels();
+        protected DronesSkills droneSkills = new DronesSkills();
 
         public DroneUpgrades()
         {
@@ -166,329 +166,329 @@ namespace Drones
 
         public DroneUpgrades( BasicDroneLevels basicDroneStats, DronesSkills droneSkills )
         {
-            _basicDroneLvls = basicDroneStats;
-            _droneSkills = droneSkills;
+            basicDroneLvls = basicDroneStats;
+            droneSkills = droneSkills;
         }
 
-        public BasicDroneLevels _GetBasicStats()
+        public BasicDroneLevels GetBasicStats()
         {
-            return _basicDroneLvls;
+            return basicDroneLvls;
         }
 
-        public DronesSkills _GetDroneSkills()
+        public DronesSkills GetDroneSkills()
         {
-            return _droneSkills;
+            return droneSkills;
         }
 
-        protected void _IncreaseStats( ref int __curStats, int __maxStats )
+        protected void IncreaseStats( ref int curStats, int maxStats )
         {
-            if ( _basicDroneLvls._availablePoints > 0 )
+            if ( basicDroneLvls.availablePoints > 0 )
             {
-                if ( __curStats + 1 <= __maxStats )
+                if ( curStats + 1 <= maxStats )
                 {
-                    __curStats++;
-                    _basicDroneLvls._availablePoints--;
+                    curStats++;
+                    basicDroneLvls.availablePoints--;
                 }
             }
         }
 
-        protected void _DecreaseStats( ref int __lvl )
+        protected void DecreaseStats( ref int lvl )
         {
-            if ( __lvl > 0 )
+            if ( lvl > 0 )
             {
-                __lvl--;
-                _basicDroneLvls._availablePoints++;
+                lvl--;
+                basicDroneLvls.availablePoints++;
             }
         }
 
-        public void _IncreaseArmor()
+        public void IncreaseArmor()
         {
-            _IncreaseStats( ref _basicDroneLvls._armorLvl, _basicDroneLvls._maxArmorLvl );
+            IncreaseStats( ref basicDroneLvls.armorLvl, basicDroneLvls.maxArmorLvl );
         }
 
-        public void _DecreaseArmor()
+        public void DecreaseArmor()
         {
-            _DecreaseStats( ref _basicDroneLvls._armorLvl );
+            DecreaseStats( ref basicDroneLvls.armorLvl );
         }
 
-        public void _IncreaseSpeed()
+        public void IncreaseSpeed()
         {
-            _IncreaseStats( ref _basicDroneLvls._speedLvl, _basicDroneLvls._maxSpeedLvl );
+            IncreaseStats( ref basicDroneLvls.speedLvl, basicDroneLvls.maxSpeedLvl );
         }
 
-        public void _DecreaseSpeed()
+        public void DecreaseSpeed()
         {
-            _DecreaseStats( ref _basicDroneLvls._speedLvl );
+            DecreaseStats( ref basicDroneLvls.speedLvl );
         }
 
-        protected bool _UpgradeStats( ref int __curLvl, int __maxLvl, ref int __money, int __baseCost )
+        protected bool UpgradeStats( ref int curLvl, int maxLvl, ref int money, int baseCost )
         {
-            if ( __curLvl + 1 <= __maxLvl
-                && __money >= __baseCost * ( __curLvl + 1 ) )
+            if ( curLvl + 1 <= maxLvl
+                && money >= baseCost * ( curLvl + 1 ) )
             {
-                __curLvl++;
-                __money -= __baseCost * __curLvl;
+                curLvl++;
+                money -= baseCost * curLvl;
                 return true;
             }
             return false;
         }
 
-        public void _UpgradeShorteningTime( ref int __money )
+        public void UpgradeShorteningTime( ref int money )
         {
-            _UpgradeStats(
-                ref _basicDroneLvls._shorteningCoolingDownTimeLevel,
-                _basicDroneLvls._maxShorteningTimeLevel,
-                ref __money,
-                _basicDroneLvls._shorteningTimeBaseCost );
+            UpgradeStats(
+                ref basicDroneLvls.shorteningCoolingDownTimeLevel,
+                basicDroneLvls.maxShorteningTimeLevel,
+                ref money,
+                basicDroneLvls.shorteningTimeBaseCost );
         }
 
-        public void _UpgradeEngine( ref int __money )
+        public void UpgradeEngine( ref int money )
         {
-            if ( _UpgradeStats(
-                ref _basicDroneLvls._engineLevel,
-                _basicDroneLvls._maxEngineLvl,
-                ref __money,
-                _basicDroneLvls._engineBaseCost
+            if ( UpgradeStats(
+                ref basicDroneLvls.engineLevel,
+                basicDroneLvls.maxEngineLvl,
+                ref money,
+                basicDroneLvls.engineBaseCost
                 ) )
             {
-                _basicDroneLvls._ownedPoints += _basicDroneLvls._pointsPerEngineLvl;
-                _basicDroneLvls._availablePoints += _basicDroneLvls._pointsPerEngineLvl;
+                basicDroneLvls.ownedPoints += basicDroneLvls.pointsPerEngineLvl;
+                basicDroneLvls.availablePoints += basicDroneLvls.pointsPerEngineLvl;
             }
         }
 
-        public void _ToogleExtincionOnTargetSkill( ref int __money)
+        public void ToogleExtincionOnTargetSkill( ref int money )
         {
-            if ( _droneSkills._extinctionOnReachingTargetIsActive )
+            if ( droneSkills.extinctionOnReachingTargetIsActive )
             {
-                _droneSkills._extinctionOnReachingTargetIsActive = false;
-                _basicDroneLvls._availablePoints += _droneSkills._extinctionOnReachingTargetPointsCost;
+                droneSkills.extinctionOnReachingTargetIsActive = false;
+                basicDroneLvls.availablePoints += droneSkills.extinctionOnReachingTargetPointsCost;
             }
             else
             {
-                if(_basicDroneLvls._availablePoints - _droneSkills._extinctionOnReachingTargetPointsCost >= 0 )
+                if ( basicDroneLvls.availablePoints - droneSkills.extinctionOnReachingTargetPointsCost >= 0 )
                 {
-                    if(!_droneSkills._extinctionOnReachingTargetHasBeenBought && __money - _droneSkills._extinctionOnReachingTargetMoneyCost >= 0 )
+                    if ( !droneSkills.extinctionOnReachingTargetHasBeenBought && money - droneSkills.extinctionOnReachingTargetMoneyCost >= 0 )
                     {
-                        __money -= _droneSkills._extinctionOnReachingTargetMoneyCost;
-                        _droneSkills._extinctionOnReachingTargetHasBeenBought = true;
+                        money -= droneSkills.extinctionOnReachingTargetMoneyCost;
+                        droneSkills.extinctionOnReachingTargetHasBeenBought = true;
                     }
 
-                    _droneSkills._extinctionOnReachingTargetIsActive = true;
-                    _basicDroneLvls._availablePoints -= _droneSkills._extinctionOnReachingTargetPointsCost;
+                    droneSkills.extinctionOnReachingTargetIsActive = true;
+                    basicDroneLvls.availablePoints -= droneSkills.extinctionOnReachingTargetPointsCost;
                 }
             }
         }
 
-        private bool _StatsAreSmallerOrEqualToOwnedPoints( int __usedPoints )
+        private bool StatsAreSmallerOrEqualToOwnedPoints( int usedPoints )
         {
-            return __usedPoints <= _basicDroneLvls._ownedPoints;
+            return usedPoints <= basicDroneLvls.ownedPoints;
         }
 
-        protected virtual int _GiveNrOfUsedPoints()
+        protected virtual int GiveNrOfUsedPoints()
         {
-            int __usedPoints = 0;
-            __usedPoints += _basicDroneLvls._armorLvl;
-            __usedPoints += _basicDroneLvls._speedLvl;
-            if ( _droneSkills._extinctionOnReachingTargetIsActive )
-                __usedPoints += _droneSkills._extinctionOnReachingTargetPointsCost;
-            return __usedPoints;
+            int usedPoints = 0;
+            usedPoints += basicDroneLvls.armorLvl;
+            usedPoints += basicDroneLvls.speedLvl;
+            if ( droneSkills.extinctionOnReachingTargetIsActive )
+                usedPoints += droneSkills.extinctionOnReachingTargetPointsCost;
+            return usedPoints;
         }
 
-        public void _MakeSureThatStatsAreCorrect()
+        public void MakeSureThatStatsAreCorrect()
         {
-            if ( !_StatsAreSmallerOrEqualToOwnedPoints( _GiveNrOfUsedPoints() ) )
+            if ( !StatsAreSmallerOrEqualToOwnedPoints( GiveNrOfUsedPoints() ) )
             {
-                _ResetStatsAndGiveBackPoints();
+                ResetStatsAndGiveBackPoints();
             }
 
-            if ( _basicDroneLvls._shorteningCoolingDownTimeLevel > _basicDroneLvls._maxShorteningTimeLevel )
+            if ( basicDroneLvls.shorteningCoolingDownTimeLevel > basicDroneLvls.maxShorteningTimeLevel )
             {
-                _basicDroneLvls._shorteningCoolingDownTimeLevel = _basicDroneLvls._maxShorteningTimeLevel;
+                basicDroneLvls.shorteningCoolingDownTimeLevel = basicDroneLvls.maxShorteningTimeLevel;
             }
         }
 
-        protected virtual void _ResetStatsAndGiveBackPoints()
+        protected virtual void ResetStatsAndGiveBackPoints()
         {
-            _basicDroneLvls._availablePoints = _basicDroneLvls._ownedPoints;
-            _basicDroneLvls._armorLvl = 0;
-            _basicDroneLvls._speedLvl = 0;
+            basicDroneLvls.availablePoints = basicDroneLvls.ownedPoints;
+            basicDroneLvls.armorLvl = 0;
+            basicDroneLvls.speedLvl = 0;
         }
     }
 
     [Serializable]
     public class DroneFireFighterUpgrades : DroneUpgrades
     {
-        protected FirefighterDroneLevels _fireFighterDroneLevels = new FirefighterDroneLevels();
+        protected FirefighterDroneLevels fireFighterDroneLevels = new FirefighterDroneLevels();
 
         public DroneFireFighterUpgrades()
         {
-            _basicDroneLvls = new BasicDroneLevels();
-            _droneSkills = new DronesSkills();
-            _fireFighterDroneLevels = new FirefighterDroneLevels();
+            basicDroneLvls = new BasicDroneLevels();
+            droneSkills = new DronesSkills();
+            fireFighterDroneLevels = new FirefighterDroneLevels();
         }
 
         public DroneFireFighterUpgrades( BasicDroneLevels basicDroneStats, DronesSkills droneSkills, FirefighterDroneLevels fireFighterDroneStats ) : base( basicDroneStats, droneSkills )
         {
-            _basicDroneLvls = basicDroneStats;
-            _fireFighterDroneLevels = fireFighterDroneStats;
-            _droneSkills = droneSkills;
+            basicDroneLvls = basicDroneStats;
+            fireFighterDroneLevels = fireFighterDroneStats;
+            droneSkills = droneSkills;
         }
 
-        public FirefighterDroneLevels _FireFighterDroneLevels
+        public FirefighterDroneLevels FireFighterDroneLevels
         {
             get
             {
-                return _fireFighterDroneLevels;
+                return fireFighterDroneLevels;
             }
         }
 
-        public void _IncreaseAmmo()
+        public void IncreaseAmmo()
         {
-            _IncreaseStats( ref _fireFighterDroneLevels._ammoLvl, _fireFighterDroneLevels._maxAmmo );
+            IncreaseStats( ref fireFighterDroneLevels.ammoLvl, fireFighterDroneLevels.maxAmmo );
         }
 
-        public void _DecreaseAmmo()
+        public void DecreaseAmmo()
         {
-            _DecreaseStats( ref _fireFighterDroneLevels._ammoLvl );
+            DecreaseStats( ref fireFighterDroneLevels.ammoLvl );
         }
 
-        public void _IncreaseExtincionSize()
+        public void IncreaseExtincionSize()
         {
-            _IncreaseStats( ref _fireFighterDroneLevels._sizeOfExtincionLvl, _fireFighterDroneLevels._maxLvLOfSizeOfExtinction );
+            IncreaseStats( ref fireFighterDroneLevels.sizeOfExtincionLvl, fireFighterDroneLevels.maxLvLOfSizeOfExtinction );
         }
 
-        public void _DecreaseExtincionSize()
+        public void DecreaseExtincionSize()
         {
-            _DecreaseStats( ref _fireFighterDroneLevels._sizeOfExtincionLvl );
+            DecreaseStats( ref fireFighterDroneLevels.sizeOfExtincionLvl );
         }
 
-        protected override int _GiveNrOfUsedPoints()
+        protected override int GiveNrOfUsedPoints()
         {
-            int __nrOfUsedPoints = base._GiveNrOfUsedPoints();
-            __nrOfUsedPoints += _fireFighterDroneLevels._ammoLvl;
-            __nrOfUsedPoints += _fireFighterDroneLevels._sizeOfExtincionLvl;
-            return __nrOfUsedPoints;
+            int nrOfUsedPoints = base.GiveNrOfUsedPoints();
+            nrOfUsedPoints += fireFighterDroneLevels.ammoLvl;
+            nrOfUsedPoints += fireFighterDroneLevels.sizeOfExtincionLvl;
+            return nrOfUsedPoints;
         }
 
-        protected override void _ResetStatsAndGiveBackPoints()
+        protected override void ResetStatsAndGiveBackPoints()
         {
-            base._ResetStatsAndGiveBackPoints();
-            _fireFighterDroneLevels._ammoLvl = 0;
-            _fireFighterDroneLevels._sizeOfExtincionLvl = 0;
+            base.ResetStatsAndGiveBackPoints();
+            fireFighterDroneLevels.ammoLvl = 0;
+            fireFighterDroneLevels.sizeOfExtincionLvl = 0;
         }
     }
 
     [Serializable]
     public class DroneAmbulanceUpgrades : DroneUpgrades
     {
-        protected AmbulanceDroneLevels _ambulanceDroneLevels = new AmbulanceDroneLevels();
+        protected AmbulanceDroneLevels ambulanceDroneLevels = new AmbulanceDroneLevels();
 
         public DroneAmbulanceUpgrades()
         {
-            _basicDroneLvls = new BasicDroneLevels();
-            _droneSkills = new DronesSkills();
-            _ambulanceDroneLevels = new AmbulanceDroneLevels();
+            basicDroneLvls = new BasicDroneLevels();
+            droneSkills = new DronesSkills();
+            ambulanceDroneLevels = new AmbulanceDroneLevels();
         }
 
         public DroneAmbulanceUpgrades( BasicDroneLevels basicDroneStats, DronesSkills droneSkills, AmbulanceDroneLevels ambulanceDroneStats ) : base( basicDroneStats, droneSkills )
         {
-            _basicDroneLvls = basicDroneStats;
-            _droneSkills = droneSkills;
-            _ambulanceDroneLevels = ambulanceDroneStats;
+            basicDroneLvls = basicDroneStats;
+            droneSkills = droneSkills;
+            ambulanceDroneLevels = ambulanceDroneStats;
         }
 
-        public AmbulanceDroneLevels _AmbulanceDroneLevels
+        public AmbulanceDroneLevels AmbulanceDroneLevels
         {
             get
             {
-                return _ambulanceDroneLevels;
+                return ambulanceDroneLevels;
             }
         }
 
-        public void _IncreaseSlowDownDyingLevel()
+        public void IncreaseSlowDownDyingLevel()
         {
-            _IncreaseStats( ref _ambulanceDroneLevels._slowDownDyingLevel, _ambulanceDroneLevels._maxSlowDownDecreasing );
+            IncreaseStats( ref ambulanceDroneLevels.slowDownDyingLevel, ambulanceDroneLevels.maxSlowDownDecreasing );
         }
 
-        public void _DecreaseSlowDownDyingLevel()
+        public void DecreaseSlowDownDyingLevel()
         {
-            _DecreaseStats( ref _ambulanceDroneLevels._slowDownDyingLevel );
+            DecreaseStats( ref ambulanceDroneLevels.slowDownDyingLevel );
         }
 
-        protected override int _GiveNrOfUsedPoints()
+        protected override int GiveNrOfUsedPoints()
         {
-            int __nrOfUsedPoints = base._GiveNrOfUsedPoints();
-            __nrOfUsedPoints = _ambulanceDroneLevels._slowDownDyingLevel;
-            return __nrOfUsedPoints;
+            int nrOfUsedPoints = base.GiveNrOfUsedPoints();
+            nrOfUsedPoints = ambulanceDroneLevels.slowDownDyingLevel;
+            return nrOfUsedPoints;
         }
 
-        protected override void _ResetStatsAndGiveBackPoints()
+        protected override void ResetStatsAndGiveBackPoints()
         {
-            base._ResetStatsAndGiveBackPoints();
-            _ambulanceDroneLevels._slowDownDyingLevel = 0;
+            base.ResetStatsAndGiveBackPoints();
+            ambulanceDroneLevels.slowDownDyingLevel = 0;
         }
     }
 
     [Serializable]
     public class DroneSupplyUpgrades : DroneUpgrades
     {
-        SupplyDroneLevels _supplyDroneLevels = new SupplyDroneLevels();
+        SupplyDroneLevels supplyDroneLevels = new SupplyDroneLevels();
 
         public DroneSupplyUpgrades()
         {
-            _basicDroneLvls = new BasicDroneLevels();
-            _droneSkills = new DronesSkills();
-            _supplyDroneLevels = new SupplyDroneLevels();
+            basicDroneLvls = new BasicDroneLevels();
+            droneSkills = new DronesSkills();
+            supplyDroneLevels = new SupplyDroneLevels();
         }
 
         public DroneSupplyUpgrades( BasicDroneLevels basicDroneStats, DronesSkills droneSkills, SupplyDroneLevels supplyDroneStats ) : base( basicDroneStats, droneSkills )
         {
-            _basicDroneLvls = basicDroneStats;
-            _droneSkills = droneSkills;
-            _supplyDroneLevels = supplyDroneStats;
+            basicDroneLvls = basicDroneStats;
+            droneSkills = droneSkills;
+            supplyDroneLevels = supplyDroneStats;
         }
 
-        public SupplyDroneLevels _SupplyDroneLvls
+        public SupplyDroneLevels SupplyDroneLvls
         {
             get
             {
-                return _supplyDroneLevels;
+                return supplyDroneLevels;
             }
         }
 
-        public void _IncreaseSizeOfPackage()
+        public void IncreaseSizeOfPackage()
         {
-            _IncreaseStats( ref _supplyDroneLevels._sizeOfPackage, _supplyDroneLevels._maxSizeOfPackage );
+            IncreaseStats( ref supplyDroneLevels.sizeOfPackage, supplyDroneLevels.maxSizeOfPackage );
         }
 
-        public void _DecreaseSizeOfPackage()
+        public void DecreaseSizeOfPackage()
         {
-            _DecreaseStats( ref _supplyDroneLevels._sizeOfPackage );
+            DecreaseStats( ref supplyDroneLevels.sizeOfPackage );
         }
 
-        public void _IncreaseArmorPackage()
+        public void IncreaseArmorPackage()
         {
-            _IncreaseStats( ref _supplyDroneLevels._armorOfPackage, _supplyDroneLevels._maxArmorOfPackage );
+            IncreaseStats( ref supplyDroneLevels.armorOfPackage, supplyDroneLevels.maxArmorOfPackage );
         }
 
-        public void _DecreaseArmorPackage()
+        public void DecreaseArmorPackage()
         {
-            _DecreaseStats( ref _supplyDroneLevels._armorOfPackage );
+            DecreaseStats( ref supplyDroneLevels.armorOfPackage );
         }
 
-        protected override int _GiveNrOfUsedPoints()
+        protected override int GiveNrOfUsedPoints()
         {
-            int __nrOfUsedPoints = base._GiveNrOfUsedPoints();
-            __nrOfUsedPoints += _supplyDroneLevels._sizeOfPackage;
-            __nrOfUsedPoints += _supplyDroneLevels._armorOfPackage;
-            return __nrOfUsedPoints;
+            int nrOfUsedPoints = base.GiveNrOfUsedPoints();
+            nrOfUsedPoints += supplyDroneLevels.sizeOfPackage;
+            nrOfUsedPoints += supplyDroneLevels.armorOfPackage;
+            return nrOfUsedPoints;
         }
 
-        protected override void _ResetStatsAndGiveBackPoints()
+        protected override void ResetStatsAndGiveBackPoints()
         {
-            base._ResetStatsAndGiveBackPoints();
-            _supplyDroneLevels._sizeOfPackage = 0;
-            _supplyDroneLevels._armorOfPackage = 0;
+            base.ResetStatsAndGiveBackPoints();
+            supplyDroneLevels.sizeOfPackage = 0;
+            supplyDroneLevels.armorOfPackage = 0;
         }
     }
 }
