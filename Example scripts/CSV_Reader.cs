@@ -2,288 +2,288 @@ using UnityEngine;
 //using System.Collections;
 using System.Collections.Generic;
 using MyDataTypes;
-#if UNITY_EDITOR
+#if UNITYEDITOR
 [ExecuteInEditMode]
 #endif
-public class CSV_Reader : MonoBehaviour
+public class CSVReader : MonoBehaviour
 {
-    public TextAsset _CSV_File;
-    public List<SlopeTile> _groundSlopeTiles = new List<SlopeTile>();
-    public List<SlopeTile> _ceilingSlopeTiles = new List<SlopeTile>();
-    public int _startId;
-    public int _endId;
-    public bool _fillGroundSlopes;
-    public bool _fillCeilingSlopes;
-    public bool _filled;
-    List<Vector2> _groundSlopePairs;
-    List<Vector2> _ceilingSlopePairs;
+    public TextAsset CSVFile;
+    public List<SlopeTile> groundSlopeTiles = new List<SlopeTile>();
+    public List<SlopeTile> ceilingSlopeTiles = new List<SlopeTile>();
+    public int startId;
+    public int endId;
+    public bool fillGroundSlopes;
+    public bool fillCeilingSlopes;
+    public bool filled;
+    List<Vector2> groundSlopePairs;
+    List<Vector2> ceilingSlopePairs;
 
-    [HideInInspector] public sbyte[,] _csvMap;
+    [HideInInspector] public sbyte[,] csvMap;
 
-    SectorsHandler _secHan = new SectorsHandler();
-    public CollidersOP _cOP;
-    public static CSV_Reader _csv_Reader;
+    SectorsHandler secHan = new SectorsHandler();
+    public CollidersOP cOP;
+    public static CSVReader csvReader;
 
     void Awake()
     {
         if ( Application.isPlaying )
         {
-            if ( !_cOP )
+            if ( !cOP )
             {
-                Debug.LogError( "_cOP = null" );
+                Debug.LogError( "cOP = null" );
             }
-            _csvMap = _GetValues();
-            _SortSlopes();
-            _secHan._csvMap = _csvMap;
-            _secHan._GetSectorsStartPoints();
+            csvMap = GetValues();
+            SortSlopes();
+            secHan.csvMap = csvMap;
+            secHan.GetSectorsStartPoints();
 
-            _CreateGroundCollidersPos( _csvMap );
-            _CreateCeilingCollidersPos( _csvMap );
-            _CreateWallCollidersPos( _csvMap );
-            _CreateEdgesPos( _csvMap );
+            CreateGroundCollidersPos( csvMap );
+            CreateCeilingCollidersPos( csvMap );
+            CreateWallCollidersPos( csvMap );
+            CreateEdgesPos( csvMap );
 
-            _cOP._sektors = _secHan._sektors;
+            cOP.sektors = secHan.sektors;
 
-            _csv_Reader = this;
+            csvReader = this;
         }
 
     }
-#if UNITY_EDITOR
+#if UNITYEDITOR
     void Update()
     {
-        if( (_fillGroundSlopes || _fillCeilingSlopes) && !_filled )
+        if( (fillGroundSlopes || fillCeilingSlopes) && !filled )
         {
-            if ( _fillGroundSlopes )
-                _Fill( _groundSlopeTiles );
-            else if ( _fillCeilingSlopes )
-                _Fill( _ceilingSlopeTiles);
+            if ( fillGroundSlopes )
+                Fill( groundSlopeTiles );
+            else if ( fillCeilingSlopes )
+                Fill( ceilingSlopeTiles);
             
-            _fillGroundSlopes = false;
-            _fillCeilingSlopes = false;
-            _filled = true;
+            fillGroundSlopes = false;
+            fillCeilingSlopes = false;
+            filled = true;
             UnityEditor.EditorUtility.SetDirty(this);
         }
     }
 
-    void _Fill(List<SlopeTile> __slopeTiles)
+    void Fill(List<SlopeTile> slopeTiles)
     {
-        for(int id = _startId ; id <= _endId ; ++id )
+        for(int id = startId ; id <= endId ; ++id )
         {
-            __slopeTiles.Add( new SlopeTile(id) );
+            slopeTiles.Add( new SlopeTile(id) );
         }
     }
 #endif
 
-    void _PrintPos2(List<Pos2> __pos2)
+    void PrintPos2( List<Pos2> pos2 )
     {
-        for (int i = 0; i < __pos2.Count; ++i)
+        for ( int i = 0 ; i < pos2.Count ; ++i )
         {
-            print(__pos2[i].first + " " + __pos2[i].second);
+            print( pos2[ i ].first + " " + pos2[ i ].second );
         }
     }
 
-    void _CreateEdgesPos(sbyte[,] __2D_Array)
+    void CreateEdgesPos( sbyte[,] 2DArray )
     {
-        for (ushort q = 0; q < _secHan._sektors.GetLength(0); ++q)
+        for ( ushort q = 0 ; q < secHan.sektors.GetLength( 0 ) ; ++q )
         {
-            for (ushort w = 0; w < _secHan._sektors.GetLength(1); ++w)
+            for ( ushort w = 0 ; w < secHan.sektors.GetLength( 1 ) ; ++w )
             {
-                bool __rightEnd = false;
-                var nr_y = q * _secHan._width_height;
-                var y_end = nr_y + _secHan._width_height;
-                if ( nr_y == 0 ) nr_y = 1;
-                if (y_end > __2D_Array.GetLength(0) - 1) y_end = __2D_Array.GetLength(0) - 1;
+                bool rightEnd = false;
+                var nry = q * secHan.widthheight;
+                var yend = nry + secHan.widthheight;
+                if ( nry == 0 ) nry = 1;
+                if ( yend > 2DArray.GetLength( 0 ) - 1 ) yend = 2DArray.GetLength( 0 ) - 1;
 
-                var nr_x = w * _secHan._width_height;
-                var x_end = nr_x + _secHan._width_height;
-                if ( nr_x == 0 ) nr_x = 1;
-                if (x_end >= __2D_Array.GetLength(1)) { x_end = __2D_Array.GetLength(1); __rightEnd = true; }
-           
+                var nrx = w * secHan.widthheight;
+                var xend = nrx + secHan.widthheight;
+                if ( nrx == 0 ) nrx = 1;
+                if ( xend >= 2DArray.GetLength( 1 ) ) { xend = 2DArray.GetLength( 1 ); rightEnd = true; }
+
                 PosList2 pl2 = new PosList2(new List<Vector2>(), new List<Vector2>());
 
-                float __correction = 0.625f;
+                float correction = 0.625f;
 
                 //Left edge
-                if (__rightEnd) x_end -= 1;
-                for (int y = nr_y; y < y_end; ++y)
+                if ( rightEnd ) xend -= 1;
+                for ( int y = nry ; y < yend ; ++y )
                 {
-                    for ( int x = nr_x ; x < x_end ; ++x )
+                    for ( int x = nrx ; x < xend ; ++x )
                     {
-                        if ( __2D_Array[ y, x ] == -1 && __2D_Array[ y + 1, x + 1 ] != -1 && __2D_Array[ y, x + 1 ] == -1 && __2D_Array[ y + 1, x ] == -1 )
+                        if ( 2DArray[ y, x ] == -1 && 2DArray[ y + 1, x + 1 ] != -1 && 2DArray[ y, x + 1 ] == -1 && 2DArray[ y + 1, x ] == -1 )
                         {
-                            if ( _groundSlopeTiles.Count > 0 )
+                            if ( groundSlopeTiles.Count > 0 )
                             {
-                                var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[y + 1, x + 1]);
-                                if ( __det_slope._found )
+                                var detslope = FindSlope(groundSlopeTiles, 2DArray[y + 1, x + 1]);
+                                if ( detslope.found )
                                     continue;
                             }
 
-                            if ( _ceilingSlopeTiles.Count > 0 )
+                            if ( ceilingSlopeTiles.Count > 0 )
                             {
-                                var __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ y + 1, x + 1 ] );
-                                if ( __det_slope._found )
+                                var detslope = FindSlope( ceilingSlopeTiles, 2DArray[ y + 1, x + 1 ] );
+                                if ( detslope.found )
                                     continue;
                             }
 
-                            pl2.v2_1.Add( new Vector2( x + __correction, ( y + __correction ) * -1 ) );
+                            pl2.v21.Add( new Vector2( x + correction, ( y + correction ) * -1 ) );
                         }
                     }
                 }
 
                 //Right edge
-                if (__rightEnd) x_end += 1;
-                if (w == 0) nr_x = 1;
-                for (int i = nr_y; i < y_end; ++i)
+                if ( rightEnd ) xend += 1;
+                if ( w == 0 ) nrx = 1;
+                for ( int i = nry ; i < yend ; ++i )
                 {
-                    for (int z = nr_x; z < x_end; ++z)
+                    for ( int z = nrx ; z < xend ; ++z )
                     {
-                        if (__2D_Array[i, z] == -1 && __2D_Array[i + 1, z - 1] != -1 && __2D_Array[i, z - 1] == -1 && __2D_Array[i + 1, z] == -1)
+                        if ( 2DArray[ i, z ] == -1 && 2DArray[ i + 1, z - 1 ] != -1 && 2DArray[ i, z - 1 ] == -1 && 2DArray[ i + 1, z ] == -1 )
                         {
-                            var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[i + 1, z - 1]);
-                            if ( __det_slope._found )
+                            var detslope = FindSlope(groundSlopeTiles, 2DArray[i + 1, z - 1]);
+                            if ( detslope.found )
                                 continue;
 
-                            __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ i + 1, z - 1 ] );
-                            if ( __det_slope._found )
+                            detslope = FindSlope( ceilingSlopeTiles, 2DArray[ i + 1, z - 1 ] );
+                            if ( detslope.found )
                                 continue;
-                            pl2.v2_2.Add(new Vector2(z - __correction, (i + __correction) * -1));
+                            pl2.v22.Add( new Vector2( z - correction, ( i + correction ) * -1 ) );
                         }
                     }
                 }
-                _secHan._sektors[q, w]._edgesPos = pl2;
+                secHan.sektors[ q, w ].edgesPos = pl2;
             }
         }
     }
 
-    void _CreateWallCollidersPos(sbyte[,] __2D_Array)
+    void CreateWallCollidersPos( sbyte[,] 2DArray )
     {
-        for (ushort q = 0; q < _secHan._sektors.GetLength(0); ++q)
+        for ( ushort q = 0 ; q < secHan.sektors.GetLength( 0 ) ; ++q )
         {
-            for (ushort w = 0; w < _secHan._sektors.GetLength(1); ++w)
+            for ( ushort w = 0 ; w < secHan.sektors.GetLength( 1 ) ; ++w )
             {
-                bool __rightEnd = false;
-                var nr_y = q * _secHan._width_height;
-                
-                var y_end = nr_y + _secHan._width_height;
-                if ( nr_y == 0 ) nr_y = 1;
-                if (y_end > __2D_Array.GetLength(0)) y_end = __2D_Array.GetLength(0);
+                bool rightEnd = false;
+                var nry = q * secHan.widthheight;
 
-                var nr_x = w * _secHan._width_height;
-                
-                var x_end = nr_x + _secHan._width_height;
-                if ( nr_x == 0 ) nr_x = 1;
-                if (x_end >= __2D_Array.GetLength(1)) { x_end = __2D_Array.GetLength(1); __rightEnd = true; }
+                var yend = nry + secHan.widthheight;
+                if ( nry == 0 ) nry = 1;
+                if ( yend > 2DArray.GetLength( 0 ) ) yend = 2DArray.GetLength( 0 );
 
-                bool __checking = false;
-                List<Pos2> __pos2 = new List<Pos2>();
+                var nrx = w * secHan.widthheight;
 
-                float __correctionHor = 0.625f;
-                float __correctionVerCorner = 0.625f;
-                float __correctionVerEdge = 0.375f;
+                var xend = nrx + secHan.widthheight;
+                if ( nrx == 0 ) nrx = 1;
+                if ( xend >= 2DArray.GetLength( 1 ) ) { xend = 2DArray.GetLength( 1 ); rightEnd = true; }
+
+                bool checking = false;
+                List<Pos2> pos2 = new List<Pos2>();
+
+                float correctionHor = 0.625f;
+                float correctionVerCorner = 0.625f;
+                float correctionVerEdge = 0.375f;
 
                 //Left Wall
-                if (w == 0) nr_x += 1;
-                for (int x = nr_x; x < x_end; ++x)
+                if ( w == 0 ) nrx += 1;
+                for ( int x = nrx ; x < xend ; ++x )
                 {
-                    for (int y = nr_y; y < y_end; ++y)
+                    for ( int y = nry ; y < yend ; ++y )
                     {
-                        if (!__checking)
+                        if ( !checking )
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if ( __2D_Array[ y, x - 1 ] != -1 )
+                                if ( 2DArray[ y, x - 1 ] != -1 )
                                 {
-                                    if ( _groundSlopeTiles.Count > 0 )
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[y, x - 1]);
-                                        if ( __det_slope._found )
+                                        var detslope = FindSlope(groundSlopeTiles, 2DArray[y, x - 1]);
+                                        if ( detslope.found )
                                             continue;
                                     }
 
-                                    if ( _ceilingSlopeTiles.Count > 0 )
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ y, x - 1 ] );
+                                        var detslope = FindSlope( ceilingSlopeTiles, 2DArray[ y, x - 1 ] );
 
-                                        if ( __det_slope._found )
+                                        if ( detslope.found )
                                             continue;
                                     }
                                     // First check. Creating of first vertex.
-                                    __checking = true;
-                                   
-                                    if ( __2D_Array[ y - 1, x - 1 ] == -1 ) __pos2.Add( new Pos2( new Vector2( x - __correctionHor, ( y - __correctionVerEdge ) * -1 ), new Vector2( 0, 0 ) ) );//This is upper edge
-                                    else __pos2.Add( new Pos2( new Vector2( x - __correctionHor, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) ); // ceiling
+                                    checking = true;
+
+                                    if ( 2DArray[ y - 1, x - 1 ] == -1 ) pos2.Add( new Pos2( new Vector2( x - correctionHor, ( y - correctionVerEdge ) * -1 ), new Vector2( 0, 0 ) ) );//This is upper edge
+                                    else pos2.Add( new Pos2( new Vector2( x - correctionHor, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) ); // ceiling
                                     //Checking if end of sector
-                                    if ( y == y_end - 1 )
+                                    if ( y == yend - 1 )
                                     {
-                                        if ( y_end != __2D_Array.GetLength( 0 ) )
-                                            if ( __2D_Array[ y + 1, x ] != -1 )
-                                                __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x - __correctionHor, ( y + __correctionVerCorner ) * -1 ) );// left bottom corner
+                                        if ( yend != 2DArray.GetLength( 0 ) )
+                                            if ( 2DArray[ y + 1, x ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + correctionVerCorner ) * -1 ) );// left bottom corner
                                             else
-                                                __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x - __correctionHor, ( y + 0.5f ) * -1 ) );
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
                                         else
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x - __correctionHor, ( y + 0.5f ) * -1 ) );
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y, x - 1] != -1)
+                                if ( 2DArray[ y, x - 1 ] != -1 )
                                 {
-                                    if( _groundSlopeTiles.Count > 0)
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[y, x - 1]);
-                                        if ( __det_slope._found )
+                                        var detslope = FindSlope(groundSlopeTiles, 2DArray[y, x - 1]);
+                                        if ( detslope.found )
                                         {
                                             --y;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x - __correctionHor, ( y + 0.5f ) * -1 ) );
-                                            __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
+                                            checking = false;
                                             continue;
                                         }
                                     }
 
-                                    if ( _ceilingSlopeTiles.Count > 0 )
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ y, x - 1 ] );
+                                        var detslope = FindSlope( ceilingSlopeTiles, 2DArray[ y, x - 1 ] );
 
-                                        if ( __det_slope._found )
+                                        if ( detslope.found )
                                         {
                                             --y;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x - __correctionHor, ( y + 0.5f ) * -1 ) );
-                                            __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
+                                            checking = false;
                                             continue;
                                         }
                                     }
-                                    
-                                    __checking = true;
+
+                                    checking = true;
                                     //Checking if end of sector
-                                    if (y == y_end - 1)
+                                    if ( y == yend - 1 )
                                     {
-                                        if (y_end != __2D_Array.GetLength(0))
-                                            if (__2D_Array[y + 1, x] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x - __correctionHor, (y + __correctionVerCorner) * -1));// this is left bottom corner
+                                        if ( yend != 2DArray.GetLength( 0 ) )
+                                            if ( 2DArray[ y + 1, x ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + correctionVerCorner ) * -1 ) );// this is left bottom corner
                                             else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x - __correctionHor, (y + 0.5f) * -1));
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
                                         else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x - __correctionHor, (y + 0.5f) * -1));
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                                 else
                                 {
                                     // When reaching edge
-                                    __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x - __correctionHor, (y + 0.5f - 1) * -1));
-                                    __checking = false;
+                                    pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + 0.5f - 1 ) * -1 ) );
+                                    checking = false;
                                 }
                             }
                             else
                             {
                                 // When reaching corner
-                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x - __correctionHor, (y + __correctionVerCorner - 1) * -1));
-                                __checking = false;
+                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x - correctionHor, ( y + correctionVerCorner - 1 ) * -1 ) );
+                                checking = false;
                             }
                         }
                     }
@@ -291,200 +291,200 @@ public class CSV_Reader : MonoBehaviour
                 // Left wall creating end
 
                 //Right
-                if (w == 0) nr_x -= 1;
-                if (__rightEnd) x_end -= 1;
-                for (int x = nr_x; x < x_end; ++x)
+                if ( w == 0 ) nrx -= 1;
+                if ( rightEnd ) xend -= 1;
+                for ( int x = nrx ; x < xend ; ++x )
                 {
-                    for (int y = nr_y; y < y_end; ++y)
+                    for ( int y = nry ; y < yend ; ++y )
                     {
-                        if (!__checking)
+                        if ( !checking )
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y, x + 1] != -1)
+                                if ( 2DArray[ y, x + 1 ] != -1 )
                                 {
-                                    if ( _groundSlopeTiles.Count > 0 )
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[y, x + 1]);
-                                        if ( __det_slope._found )
+                                        var detslope = FindSlope(groundSlopeTiles, 2DArray[y, x + 1]);
+                                        if ( detslope.found )
                                             continue;
                                     }
 
-                                    if ( _ceilingSlopeTiles.Count > 0 )
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ y, x + 1 ] );
+                                        var detslope = FindSlope( ceilingSlopeTiles, 2DArray[ y, x + 1 ] );
 
-                                        if ( __det_slope._found )
+                                        if ( detslope.found )
                                             continue;
                                     }
                                     // First check. Creating of first vertex.
 
-                                    __checking = true;
+                                    checking = true;
 
-                                    if (__2D_Array[y - 1, x + 1] == -1) __pos2.Add(new Pos2(new Vector2(x + __correctionHor, (y - __correctionVerEdge) * -1), new Vector2(0, 0)));//This is upper edge
-                                    else __pos2.Add(new Pos2(new Vector2(x + __correctionHor, (y - 0.5f) * -1), new Vector2(0, 0))); // sufit
+                                    if ( 2DArray[ y - 1, x + 1 ] == -1 ) pos2.Add( new Pos2( new Vector2( x + correctionHor, ( y - correctionVerEdge ) * -1 ), new Vector2( 0, 0 ) ) );//This is upper edge
+                                    else pos2.Add( new Pos2( new Vector2( x + correctionHor, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) ); // sufit
 
                                     // Checking if end of sector
-                                    if ( y == y_end - 1)
+                                    if ( y == yend - 1 )
                                     {
-                                        if (y_end != __2D_Array.GetLength(0))
-                                            if (__2D_Array[y + 1, x] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + __correctionVerCorner) * -1));// this is left bottom corner
+                                        if ( yend != 2DArray.GetLength( 0 ) )
+                                            if ( 2DArray[ y + 1, x ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + correctionVerCorner ) * -1 ) );// this is left bottom corner
                                             else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + 0.5f) * -1));
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
                                         else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + 0.5f) * -1));
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y, x + 1] != -1)
+                                if ( 2DArray[ y, x + 1 ] != -1 )
                                 {
-                                    if ( _groundSlopeTiles.Count > 0 )
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope(_groundSlopeTiles, __2D_Array[y, x + 1]);
-                                        if ( __det_slope._found )
+                                        var detslope = FindSlope(groundSlopeTiles, 2DArray[y, x + 1]);
+                                        if ( detslope.found )
                                         {
                                             --y;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x + __correctionHor, ( y + 0.5f ) * -1 ) );
-                                            __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
+                                            checking = false;
                                             continue;
                                         }
                                     }
 
-                                    if ( _ceilingSlopeTiles.Count > 0 )
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __det_slope = _FindSlope( _ceilingSlopeTiles, __2D_Array[ y, x + 1 ] );
-                                        if ( __det_slope._found )
+                                        var detslope = FindSlope( ceilingSlopeTiles, 2DArray[ y, x + 1 ] );
+                                        if ( detslope.found )
                                         {
                                             --y;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x + __correctionHor, ( y + 0.5f ) * -1 ) );
-                                            __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
+                                            checking = false;
                                             continue;
                                         }
                                     }
 
                                     // Checking if end of sector
-                                    if ( y == y_end - 1)
+                                    if ( y == yend - 1 )
                                     {
-                                        if (y_end != __2D_Array.GetLength(0))
-                                            if (__2D_Array[y + 1, x] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + __correctionVerCorner) * -1));// to jest lewy dolny narożnik
+                                        if ( yend != 2DArray.GetLength( 0 ) )
+                                            if ( 2DArray[ y + 1, x ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + correctionVerCorner ) * -1 ) );// to jest lewy dolny narożnik
                                             else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + 0.5f) * -1));
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
                                         else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + 0.5f) * -1));
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                                 else
                                 {
                                     // When reaching edge
-                                    __pos2[ __pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + 0.5f - 1) * -1));
-                                    __checking = false;
+                                    pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + 0.5f - 1 ) * -1 ) );
+                                    checking = false;
                                 }
                             }
                             else
                             {
                                 // When reaching corner
-                                __pos2[ __pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHor, (y + __correctionVerCorner - 1) * -1));
-                                __checking = false;
+                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHor, ( y + correctionVerCorner - 1 ) * -1 ) );
+                                checking = false;
                             }
                         }
                     }
                 }
-                if (__pos2.Count > 0) _secHan._sektors[q, w]._wallPos = __pos2;
+                if ( pos2.Count > 0 ) secHan.sektors[ q, w ].wallPos = pos2;
                 // Right wall creating end
             }
         }
     }
 
-    void _CreateGroundCollidersPos(sbyte[,] __2D_Array)
+    void CreateGroundCollidersPos( sbyte[,] 2DArray )
     {
-        for (ushort q = 0; q < _secHan._sektors.GetLength(0); ++q)
+        for ( ushort q = 0 ; q < secHan.sektors.GetLength( 0 ) ; ++q )
         {
-            for (ushort w = 0; w < _secHan._sektors.GetLength(1); ++w)
+            for ( ushort w = 0 ; w < secHan.sektors.GetLength( 1 ) ; ++w )
             {
-                var nr_y = q * _secHan._width_height;
-                var y_end = nr_y + _secHan._width_height;
-                if ( nr_y == 0 ) nr_y = 1;
-                if (y_end > __2D_Array.GetLength(0) - 1) y_end = __2D_Array.GetLength(0) - 1;
+                var nry = q * secHan.widthheight;
+                var yend = nry + secHan.widthheight;
+                if ( nry == 0 ) nry = 1;
+                if ( yend > 2DArray.GetLength( 0 ) - 1 ) yend = 2DArray.GetLength( 0 ) - 1;
 
-                var nr_x = w * _secHan._width_height;
-                var x_end = nr_x + _secHan._width_height;
-                if ( nr_x == 0 ) nr_x = 1;
-                if (x_end > __2D_Array.GetLength(1)) x_end = __2D_Array.GetLength(1);
+                var nrx = w * secHan.widthheight;
+                var xend = nrx + secHan.widthheight;
+                if ( nrx == 0 ) nrx = 1;
+                if ( xend > 2DArray.GetLength( 1 ) ) xend = 2DArray.GetLength( 1 );
 
-                float __correctionVer = 0.625f; //!IMPORTANT REMEMBER TO CHANGE VALUES IN IN FALLING GENERATOR IN DETECTING GROUND SECTION, WHEN CHANGES OCCURS
-                float __correctionHorWall = 0.625f;
-                float __correctionHorEdge = 0.375f;
+                float correctionVer = 0.625f; //!IMPORTANT REMEMBER TO CHANGE VALUES IN IN FALLING GENERATOR IN DETECTING GROUND SECTION, WHEN CHANGES OCCURS
+                float correctionHorWall = 0.625f;
+                float correctionHorEdge = 0.375f;
 
-                bool __checking = false;
-                List<Pos2> __pos2 = new List<Pos2>();
-                _groundSlopePairs = new List<Vector2>();
+                bool checking = false;
+                List<Pos2> pos2 = new List<Pos2>();
+                groundSlopePairs = new List<Vector2>();
 
                 //GROUND
-                for (int y = nr_y; y < y_end; ++y)
+                for ( int y = nry ; y < yend ; ++y )
                 {
-                    for (int x = nr_x; x < x_end; ++x)
+                    for ( int x = nrx ; x < xend ; ++x )
                     {
-                        if (!__checking)
+                        if ( !checking )
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y + 1, x] != -1)
+                                if ( 2DArray[ y + 1, x ] != -1 )
                                 {
-                                    if(_groundSlopeTiles.Count > 0 )
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __grSlope = _FindSlope(_groundSlopeTiles,__2D_Array[y + 1, x] );
-                                        if ( __grSlope._found )
+                                        var grSlope = FindSlope(groundSlopeTiles,2DArray[y + 1, x] );
+                                        if ( grSlope.found )
                                         {
-                                            if ( __grSlope._slopeTile._isSpecial )
+                                            if ( grSlope.slopeTile.isSpecial )
                                             {
-                                                if ( __grSlope._slopeTile._isLeft )
-                                                    if ( __grSlope._slopeTile._isBottom )
+                                                if ( grSlope.slopeTile.isLeft )
+                                                    if ( grSlope.slopeTile.isBottom )
                                                     {
-                                                        Vector2 __leftEndOfPair = new Vector2(x - 0.5f, (y + 1 + __correctionVer) * -1);
-                                                        if ( !_CheckIfTherIsTheSamePair( _groundSlopePairs, __leftEndOfPair ) )
+                                                        Vector2 leftEndOfPair = new Vector2(x - 0.5f, (y + 1 + correctionVer) * -1);
+                                                        if ( !CheckIfTherIsTheSamePair( groundSlopePairs, leftEndOfPair ) )
                                                         {
-                                                            __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y + __correctionVer ) * -1 ) ) );
-                                                            _groundSlopePairs.Add( __leftEndOfPair );
+                                                            pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y + correctionVer ) * -1 ) ) );
+                                                            groundSlopePairs.Add( leftEndOfPair );
                                                             x += 1;
                                                             continue;
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        Vector2 __leftEndOfPair = new Vector2(x - 2 - 0.5f, (y + 1 + __correctionVer) * -1);
-                                                        if ( !_CheckIfTherIsTheSamePair( _groundSlopePairs, __leftEndOfPair ) )
+                                                        Vector2 leftEndOfPair = new Vector2(x - 2 - 0.5f, (y + 1 + correctionVer) * -1);
+                                                        if ( !CheckIfTherIsTheSamePair( groundSlopePairs, leftEndOfPair ) )
                                                         {
-                                                            __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 0.5f, ( y + __correctionVer ) * -1 ) ) );
-                                                            _groundSlopePairs.Add( __leftEndOfPair );
+                                                            pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) ) );
+                                                            groundSlopePairs.Add( leftEndOfPair );
                                                             continue;
                                                         }
                                                     }
-                                                else if ( __grSlope._slopeTile._isBottom )
+                                                else if ( grSlope.slopeTile.isBottom )
                                                 {
-                                                    Vector2 __leftEndOfPair = new Vector2(x - 2 - 0.5f, (y + __correctionVer) * -1);
-                                                    if ( !_CheckIfTherIsTheSamePair( _groundSlopePairs, __leftEndOfPair ) )
+                                                    Vector2 leftEndOfPair = new Vector2(x - 2 - 0.5f, (y + correctionVer) * -1);
+                                                    if ( !CheckIfTherIsTheSamePair( groundSlopePairs, leftEndOfPair ) )
                                                     {
-                                                        __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 0.5f, ( y + 1 + __correctionVer ) * -1 ) ) );
-                                                        _groundSlopePairs.Add( __leftEndOfPair );
+                                                        pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 0.5f, ( y + 1 + correctionVer ) * -1 ) ) );
+                                                        groundSlopePairs.Add( leftEndOfPair );
                                                         continue;
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    Vector2 __leftEndOfPair = new Vector2(x - 0.5f, (y + __correctionVer) * -1);
-                                                    if ( !_CheckIfTherIsTheSamePair( _groundSlopePairs, __leftEndOfPair ) )
+                                                    Vector2 leftEndOfPair = new Vector2(x - 0.5f, (y + correctionVer) * -1);
+                                                    if ( !CheckIfTherIsTheSamePair( groundSlopePairs, leftEndOfPair ) )
                                                     {
-                                                        __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y + 1 + __correctionVer ) * -1 ) ) );
-                                                        _groundSlopePairs.Add( __leftEndOfPair );
+                                                        pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y + 1 + correctionVer ) * -1 ) ) );
+                                                        groundSlopePairs.Add( leftEndOfPair );
                                                         x += 1;
                                                         continue;
                                                     }
@@ -493,89 +493,89 @@ public class CSV_Reader : MonoBehaviour
                                             continue;
                                         }
                                     }
-                                    
-                                    
+
+
 
                                     // First check.
-                                    __checking = true;
-                                    if(x != 0) 
-                                        if(__2D_Array[y, x - 1] != -1)
-                                            __pos2.Add(new Pos2(new Vector2(x - __correctionHorWall, (y + __correctionVer) * -1), new Vector2(0, 0)));
-                                        else if (__2D_Array[y + 1, x - 1] != -1)
-                                            __pos2.Add(new Pos2(new Vector2(x - 0.5f, (y + __correctionVer) * -1), new Vector2(0, 0)));
+                                    checking = true;
+                                    if ( x != 0 )
+                                        if ( 2DArray[ y, x - 1 ] != -1 )
+                                            pos2.Add( new Pos2( new Vector2( x - correctionHorWall, ( y + correctionVer ) * -1 ), new Vector2( 0, 0 ) ) );
+                                        else if ( 2DArray[ y + 1, x - 1 ] != -1 )
+                                            pos2.Add( new Pos2( new Vector2( x - 0.5f, ( y + correctionVer ) * -1 ), new Vector2( 0, 0 ) ) );
                                         else
-                                            __pos2.Add(new Pos2(new Vector2(x - __correctionHorEdge, (y + __correctionVer) * -1), new Vector2(0, 0)));
+                                            pos2.Add( new Pos2( new Vector2( x - correctionHorEdge, ( y + correctionVer ) * -1 ), new Vector2( 0, 0 ) ) );
                                     else
-                                        __pos2.Add(new Pos2(new Vector2(x - 0.5f, (y + __correctionVer) * -1), new Vector2(0, 0)));
+                                        pos2.Add( new Pos2( new Vector2( x - 0.5f, ( y + correctionVer ) * -1 ), new Vector2( 0, 0 ) ) );
 
                                     //Checking if end of sector.
-                                    if (x == x_end - 1)
+                                    if ( x == xend - 1 )
                                     {
-                                        if (x_end != __2D_Array.GetLength(1))
-                                            if (__2D_Array[y, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y + __correctionVer) * -1));
-                                            else if (__2D_Array[y + 1, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y + __correctionVer) * -1));
+                                        if ( xend != 2DArray.GetLength( 1 ) )
+                                            if ( 2DArray[ y, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y + correctionVer ) * -1 ) );
+                                            else if ( 2DArray[ y + 1, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) );
                                             else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge, (y + __correctionVer) * -1));
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge, ( y + correctionVer ) * -1 ) );
                                         else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y + __correctionVer) * -1));
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y + 1, x] != -1)
+                                if ( 2DArray[ y + 1, x ] != -1 )
                                 {
-                                    if ( _groundSlopeTiles.Count > 0 )
+                                    if ( groundSlopeTiles.Count > 0 )
                                     {
-                                        var __grSlope = _FindSlope(_groundSlopeTiles,__2D_Array[y + 1, x] );
-                                        if ( __grSlope._found )
+                                        var grSlope = FindSlope(groundSlopeTiles,2DArray[y + 1, x] );
+                                        if ( grSlope.found )
                                         {
                                             x--;
-                                            __checking = false;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + __correctionVer ) * -1 ) );
+                                            checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) );
                                             continue;
                                         }
                                     }
 
 
                                     //Checking if end of sector.
-                                    if ( x == x_end - 1)
+                                    if ( x == xend - 1 )
                                     {
-                                        if (x_end != __2D_Array.GetLength(1))
-                                            if (__2D_Array[y, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y + __correctionVer) * -1));
-                                            else if(__2D_Array[y + 1, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y + __correctionVer) * -1));
+                                        if ( xend != 2DArray.GetLength( 1 ) )
+                                            if ( 2DArray[ y, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y + correctionVer ) * -1 ) );
+                                            else if ( 2DArray[ y + 1, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) );
                                             else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge, (y + __correctionVer) * -1));
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge, ( y + correctionVer ) * -1 ) );
                                         else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y + __correctionVer) * -1));
-                                        __checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y + correctionVer ) * -1 ) );
+                                        checking = false;
                                     }
                                 }
                                 else
                                 {
                                     // When reaching edge
-                                    __pos2[ __pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge - 1, (y + __correctionVer) * -1));
-                                    __checking = false;
+                                    pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge - 1, ( y + correctionVer ) * -1 ) );
+                                    checking = false;
                                 }
                             }
                             else
                             {
                                 // When reaching wall
-                                __pos2[ __pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall - 1, (y + __correctionVer) * -1));
-                                __checking = false;
+                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall - 1, ( y + correctionVer ) * -1 ) );
+                                checking = false;
                             }
                         }
                     }
                 }
-                if (__pos2.Count > 0) _secHan._sektors[q, w]._groundPos.AddRange(__pos2);
+                if ( pos2.Count > 0 ) secHan.sektors[ q, w ].groundPos.AddRange( pos2 );
 
                 // End Creating ground
             }
@@ -583,60 +583,60 @@ public class CSV_Reader : MonoBehaviour
     }
 
 
-    void _CreateCeilingCollidersPos(sbyte[,] __2D_Array)
+    void CreateCeilingCollidersPos( sbyte[,] 2DArray )
     {
-        for (ushort q = 0; q < _secHan._sektors.GetLength(0); ++q)
+        for ( ushort q = 0 ; q < secHan.sektors.GetLength( 0 ) ; ++q )
         {
-            for (ushort w = 0; w < _secHan._sektors.GetLength(1); ++w)
+            for ( ushort w = 0 ; w < secHan.sektors.GetLength( 1 ) ; ++w )
             {
-                var nr_y = q * _secHan._width_height;
-                var y_end = nr_y + _secHan._width_height;
-                if ( nr_y == 0 ) nr_y = 1;
-                if (y_end > __2D_Array.GetLength(0) - 1) y_end = __2D_Array.GetLength(0) - 1;
+                var nry = q * secHan.widthheight;
+                var yend = nry + secHan.widthheight;
+                if ( nry == 0 ) nry = 1;
+                if ( yend > 2DArray.GetLength( 0 ) - 1 ) yend = 2DArray.GetLength( 0 ) - 1;
 
-                var nr_x = w * _secHan._width_height;
-                var x_end = nr_x + _secHan._width_height;
-                if ( nr_x == 0 ) nr_x = 1;
-                if (x_end > __2D_Array.GetLength(1)) x_end = __2D_Array.GetLength(1);
+                var nrx = w * secHan.widthheight;
+                var xend = nrx + secHan.widthheight;
+                if ( nrx == 0 ) nrx = 1;
+                if ( xend > 2DArray.GetLength( 1 ) ) xend = 2DArray.GetLength( 1 );
 
-                float __correctionHorWall = 0.625f;
-                float __correctionHorEdge = 0.375f;
+                float correctionHorWall = 0.625f;
+                float correctionHorEdge = 0.375f;
 
-                bool __checking = false;
-                List<Pos2> __pos2 = new List<Pos2>();
-                
+                bool checking = false;
+                List<Pos2> pos2 = new List<Pos2>();
+
                 // Ceiling
-                __checking = false;
-                __pos2.RemoveRange(0, __pos2.Count);
-                _ceilingSlopePairs = new List<Vector2>();
+                checking = false;
+                pos2.RemoveRange( 0, pos2.Count );
+                ceilingSlopePairs = new List<Vector2>();
 
-                if (nr_y == 0) ++nr_y;
+                if ( nry == 0 ) ++nry;
 
-                for (int y = nr_y; y < y_end; ++y)
+                for ( int y = nry ; y < yend ; ++y )
                 {
-                    for (int x = nr_x; x < x_end; ++x)
+                    for ( int x = nrx ; x < xend ; ++x )
                     {
-                        if (!__checking)
+                        if ( !checking )
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y - 1, x] != -1)
+                                if ( 2DArray[ y - 1, x ] != -1 )
                                 {
-                                    if( _ceilingSlopeTiles.Count > 0)
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __ceSlope = _FindSlope(_ceilingSlopeTiles, __2D_Array[y - 1, x] );
-                                        if ( __ceSlope._found )
+                                        var ceSlope = FindSlope(ceilingSlopeTiles, 2DArray[y - 1, x] );
+                                        if ( ceSlope.found )
                                         {
-                                            if ( __ceSlope._slopeTile._isSpecial )
+                                            if ( ceSlope.slopeTile.isSpecial )
                                             {
-                                                if ( __ceSlope._slopeTile._isLeft )
-                                                    if ( __ceSlope._slopeTile._isBottom )
+                                                if ( ceSlope.slopeTile.isLeft )
+                                                    if ( ceSlope.slopeTile.isBottom )
                                                     {
-                                                        Vector2 __leftEndOfPair = new Vector2(x - 0.5f, (y - 0.5f) * -1);
-                                                        if ( !_CheckIfTherIsTheSamePair( _ceilingSlopePairs, __leftEndOfPair ) )
+                                                        Vector2 leftEndOfPair = new Vector2(x - 0.5f, (y - 0.5f) * -1);
+                                                        if ( !CheckIfTherIsTheSamePair( ceilingSlopePairs, leftEndOfPair ) )
                                                         {
-                                                            __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y - 1.5f ) * -1 ) ) );
-                                                            _ceilingSlopePairs.Add( __leftEndOfPair );
+                                                            pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y - 1.5f ) * -1 ) ) );
+                                                            ceilingSlopePairs.Add( leftEndOfPair );
 
                                                             x += 1;
                                                             continue;
@@ -644,31 +644,31 @@ public class CSV_Reader : MonoBehaviour
                                                     }
                                                     else
                                                     {
-                                                        Vector2 __leftEndOfPair = new Vector2(x - 2 - 0.5f, (y - 0.5f) * -1);
-                                                        if ( !_CheckIfTherIsTheSamePair( _ceilingSlopePairs, __leftEndOfPair ) )
+                                                        Vector2 leftEndOfPair = new Vector2(x - 2 - 0.5f, (y - 0.5f) * -1);
+                                                        if ( !CheckIfTherIsTheSamePair( ceilingSlopePairs, leftEndOfPair ) )
                                                         {
-                                                            __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 0.5f, ( y - 1.5f ) * -1 ) ) );
-                                                            _ceilingSlopePairs.Add( __leftEndOfPair );
+                                                            pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 0.5f, ( y - 1.5f ) * -1 ) ) );
+                                                            ceilingSlopePairs.Add( leftEndOfPair );
                                                             continue;
                                                         }
                                                     }
-                                                else if ( __ceSlope._slopeTile._isBottom )
+                                                else if ( ceSlope.slopeTile.isBottom )
                                                 {
-                                                    Vector2 __leftEndOfPair = new Vector2(x - 2 - 0.5f, (y - 1.5f ) * -1);
-                                                    if ( !_CheckIfTherIsTheSamePair( _ceilingSlopePairs, __leftEndOfPair ) )
+                                                    Vector2 leftEndOfPair = new Vector2(x - 2 - 0.5f, (y - 1.5f ) * -1);
+                                                    if ( !CheckIfTherIsTheSamePair( ceilingSlopePairs, leftEndOfPair ) )
                                                     {
-                                                        __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) ) );
-                                                        _ceilingSlopePairs.Add( __leftEndOfPair );
+                                                        pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) ) );
+                                                        ceilingSlopePairs.Add( leftEndOfPair );
                                                         continue;
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    Vector2 __leftEndOfPair = new Vector2(x - 0.5f, (y - 1.5f) * -1);
-                                                    if ( !_CheckIfTherIsTheSamePair( _ceilingSlopePairs, __leftEndOfPair ) )
+                                                    Vector2 leftEndOfPair = new Vector2(x - 0.5f, (y - 1.5f) * -1);
+                                                    if ( !CheckIfTherIsTheSamePair( ceilingSlopePairs, leftEndOfPair ) )
                                                     {
-                                                        __pos2.Add( new Pos2( __leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y - 0.5f ) * -1 ) ) );
-                                                        _ceilingSlopePairs.Add( __leftEndOfPair );
+                                                        pos2.Add( new Pos2( leftEndOfPair, new Vector2( x + 2 + 0.5f, ( y - 0.5f ) * -1 ) ) );
+                                                        ceilingSlopePairs.Add( leftEndOfPair );
                                                         x += 1;
                                                         continue;
                                                     }
@@ -677,136 +677,136 @@ public class CSV_Reader : MonoBehaviour
                                             continue;
                                         }
                                     }
-                                    
-                                    // First check
-                                    __checking = true;
-                                    if (x != 0)
-                                        if (__2D_Array[y, x - 1] == -1 && __2D_Array[y - 1, x - 1] != -1 ) // If there isn't tile on the left and if on top left there is tile
-                                            __pos2.Add(new Pos2(new Vector2(x - 0.5f, (y - 0.5f) * -1), new Vector2(0, 0)));
-                                        else if (__2D_Array[y, x - 1] != -1)
-                                            __pos2.Add(new Pos2(new Vector2(x - __correctionHorWall, (y - 0.5f) * -1), new Vector2(0, 0)));
-                                        else
-                                            __pos2.Add(new Pos2(new Vector2(x - __correctionHorEdge, (y - 0.5f) * -1), new Vector2(0, 0)));
-                                    else
-                                        __pos2.Add(new Pos2(new Vector2(x - __correctionHorWall, (y - 0.5f) * -1), new Vector2(0, 0)));
-                                    
-                                    //Checking if end
-                                    if (x == x_end - 1)
-                                    {
-                                        if (x_end != __2D_Array.GetLength(1))
-                                            if (__2D_Array[y, x + 1] == -1 && __2D_Array[y - 1, x + 1] != -1)// If there isn't tile on the right and if there is tile on top right;
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y - 0.5f) * -1));
-                                            else if (__2D_Array[y, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y - 0.5f) * -1));
-                                            else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge, (y - 0.5f) * -1));
-                                        else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y - 0.5f) * -1));
 
-                                        __checking = false;
+                                    // First check
+                                    checking = true;
+                                    if ( x != 0 )
+                                        if ( 2DArray[ y, x - 1 ] == -1 && 2DArray[ y - 1, x - 1 ] != -1 ) // If there isn't tile on the left and if on top left there is tile
+                                            pos2.Add( new Pos2( new Vector2( x - 0.5f, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) );
+                                        else if ( 2DArray[ y, x - 1 ] != -1 )
+                                            pos2.Add( new Pos2( new Vector2( x - correctionHorWall, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) );
+                                        else
+                                            pos2.Add( new Pos2( new Vector2( x - correctionHorEdge, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) );
+                                    else
+                                        pos2.Add( new Pos2( new Vector2( x - correctionHorWall, ( y - 0.5f ) * -1 ), new Vector2( 0, 0 ) ) );
+
+                                    //Checking if end
+                                    if ( x == xend - 1 )
+                                    {
+                                        if ( xend != 2DArray.GetLength( 1 ) )
+                                            if ( 2DArray[ y, x + 1 ] == -1 && 2DArray[ y - 1, x + 1 ] != -1 )// If there isn't tile on the right and if there is tile on top right;
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) );
+                                            else if ( 2DArray[ y, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y - 0.5f ) * -1 ) );
+                                            else
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge, ( y - 0.5f ) * -1 ) );
+                                        else
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y - 0.5f ) * -1 ) );
+
+                                        checking = false;
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (__2D_Array[y, x] == -1)
+                            if ( 2DArray[ y, x ] == -1 )
                             {
-                                if (__2D_Array[y - 1, x] != -1)
+                                if ( 2DArray[ y - 1, x ] != -1 )
                                 {
-                                    if(_ceilingSlopeTiles.Count > 0 )
+                                    if ( ceilingSlopeTiles.Count > 0 )
                                     {
-                                        var __ceSlope = _FindSlope(_ceilingSlopeTiles, __2D_Array[y - 1, x] );
-                                        if ( __ceSlope._found )
+                                        var ceSlope = FindSlope(ceilingSlopeTiles, 2DArray[y - 1, x] );
+                                        if ( ceSlope.found )
                                         {
                                             --x;
-                                            __checking = false;
-                                            __pos2[ __pos2.Count - 1 ] = new Pos2( __pos2[ __pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) );
+                                            checking = false;
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) );
 
                                             continue;
                                         }
                                     }
-                                  
-                                    // Checking if end
-                                    if (x == x_end - 1)
-                                    {
-                                        if (x_end != __2D_Array.GetLength(1))
-                                            if (__2D_Array[y, x + 1] == -1 && __2D_Array[y - 1, x + 1] != -1 )// If there isn't tile on the right and if there is tile on top right;
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + 0.5f, (y - 0.5f) * -1));
-                                            else if (__2D_Array[y, x + 1] != -1)
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y - 0.5f) * -1));
-                                            else
-                                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge, (y - 0.5f) * -1));
-                                        else
-                                            __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall, (y - 0.5f) * -1));
 
-                                        __checking = false;
+                                    // Checking if end
+                                    if ( x == xend - 1 )
+                                    {
+                                        if ( xend != 2DArray.GetLength( 1 ) )
+                                            if ( 2DArray[ y, x + 1 ] == -1 && 2DArray[ y - 1, x + 1 ] != -1 )// If there isn't tile on the right and if there is tile on top right;
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + 0.5f, ( y - 0.5f ) * -1 ) );
+                                            else if ( 2DArray[ y, x + 1 ] != -1 )
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y - 0.5f ) * -1 ) );
+                                            else
+                                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge, ( y - 0.5f ) * -1 ) );
+                                        else
+                                            pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall, ( y - 0.5f ) * -1 ) );
+
+                                        checking = false;
                                     }
                                 }
                                 else
                                 {
                                     // When reaching edge
-                                    __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorEdge - 1, (y - 0.5f) * -1));
+                                    pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorEdge - 1, ( y - 0.5f ) * -1 ) );
 
-                                    __checking = false;
+                                    checking = false;
                                 }
                             }
                             else
                             {
                                 // When reaching wall
-                                __pos2[__pos2.Count - 1] = new Pos2(__pos2[__pos2.Count - 1].first, new Vector2(x + __correctionHorWall - 1, (y - 0.5f) * -1));
-                                __checking = false;
+                                pos2[ pos2.Count - 1 ] = new Pos2( pos2[ pos2.Count - 1 ].first, new Vector2( x + correctionHorWall - 1, ( y - 0.5f ) * -1 ) );
+                                checking = false;
                             }
                         }
                     }
                 }
-                if (__pos2.Count > 0) _secHan._sektors[q, w]._ceilingPos.AddRange(__pos2);
+                if ( pos2.Count > 0 ) secHan.sektors[ q, w ].ceilingPos.AddRange( pos2 );
                 // End of creating ceiling.
             }
         }
     }
 
-    public sbyte[,] _GetValues( )
+    public sbyte[,] GetValues()
     {
-        var __lines = _CSV_File.text.Split('\n');
-        sbyte[,] __csvMap = new sbyte[__lines.GetLength(0), __lines[0].Split(',').GetLength(0)];
-        for (int y = 0; y < __lines.GetLength(0); ++y)
+        var lines = CSVFile.text.Split('\n');
+        sbyte[,] csvMap = new sbyte[lines.GetLength(0), lines[0].Split(',').GetLength(0)];
+        for ( int y = 0 ; y < lines.GetLength( 0 ) ; ++y )
         {
-            string[] __values = __lines[y].Split(',');
-            for (int x = 0; x < __values.GetLength(0); ++x)
+            string[] values = lines[y].Split(',');
+            for ( int x = 0 ; x < values.GetLength( 0 ) ; ++x )
             {
-                sbyte.TryParse(__values[x], out __csvMap[ y, x]);
+                sbyte.TryParse( values[ x ], out csvMap[ y, x ] );
             }
         }
-        return __csvMap;
+        return csvMap;
     }
 
-    bool _CheckIfTherIsTheSamePair( List<Vector2> _pairsList, Vector2 __leftEndOfPair )
+    bool CheckIfTherIsTheSamePair( List<Vector2> pairsList, Vector2 leftEndOfPair )
     {
-        for ( int id = 0 ; id < _pairsList.Count ; id++ )
+        for ( int id = 0 ; id < pairsList.Count ; id++ )
         {
-            if ( _pairsList[ id ].x == __leftEndOfPair.x && _pairsList[ id ].y == __leftEndOfPair.y) return true;
+            if ( pairsList[ id ].x == leftEndOfPair.x && pairsList[ id ].y == leftEndOfPair.y ) return true;
         }
 
         return false;
     }
 
-    BoolSlopeTile _FindSlope( List<SlopeTile> __slopeTiles , float id)
+    BoolSlopeTile FindSlope( List<SlopeTile> slopeTiles, float id )
     {
         int l, p, s;
         l = s = 0;
-        p = __slopeTiles.Count - 1;
-        
-        if ( p < 0 )  return new BoolSlopeTile(false); 
+        p = slopeTiles.Count - 1;
+
+        if ( p < 0 ) return new BoolSlopeTile( false );
 
         while ( l <= p )
         {
             s = ( l + p ) / 2;
-            
-            if ( __slopeTiles[ s ]._id == id )   
-                return new BoolSlopeTile(true, __slopeTiles[ s ]);
 
-            if ( __slopeTiles[ s ]._id < id )
+            if ( slopeTiles[ s ].id == id )
+                return new BoolSlopeTile( true, slopeTiles[ s ] );
+
+            if ( slopeTiles[ s ].id < id )
                 l = s + 1;
             else
                 p = s - 1;
@@ -814,34 +814,34 @@ public class CSV_Reader : MonoBehaviour
         return new BoolSlopeTile( false );
     }
 
-    void _SortSlopes()
+    void SortSlopes()
     {
-        _SortSlopes_inside( _groundSlopeTiles, 0, _groundSlopeTiles.Count - 1 );
-        _SortSlopes_inside( _ceilingSlopeTiles, 0, _ceilingSlopeTiles.Count - 1 );
+        SortSlopesinside( groundSlopeTiles, 0, groundSlopeTiles.Count - 1 );
+        SortSlopesinside( ceilingSlopeTiles, 0, ceilingSlopeTiles.Count - 1 );
     }
 
-    void _SortSlopes_inside( List<SlopeTile> __slopeTiles, int left, int right )
+    void SortSlopesinside( List<SlopeTile> slopeTiles, int left, int right )
     {
-        if(__slopeTiles.Count > 0 )
+        if ( slopeTiles.Count > 0 )
         {
             var i = left;
             var j = right;
-            var pivot = __slopeTiles[(left + right) / 2]._id;
+            var pivot = slopeTiles[(left + right) / 2].id;
 
             while ( i < j )
             {
-                while ( __slopeTiles[ i ]._id < pivot ) i++;
-                while ( __slopeTiles[ j ]._id > pivot ) j--;
+                while ( slopeTiles[ i ].id < pivot ) i++;
+                while ( slopeTiles[ j ].id > pivot ) j--;
                 if ( i <= j )
                 {
-                    var tmp = __slopeTiles[i];
-                    __slopeTiles[ i++ ] = __slopeTiles[ j ];
-                    __slopeTiles[ j-- ] = tmp;
+                    var tmp = slopeTiles[i];
+                    slopeTiles[ i++ ] = slopeTiles[ j ];
+                    slopeTiles[ j-- ] = tmp;
                 }
             }
 
-            if ( left < j ) _SortSlopes_inside( __slopeTiles, left, j );
-            if ( i < right ) _SortSlopes_inside( __slopeTiles, i, right );
+            if ( left < j ) SortSlopesinside( slopeTiles, left, j );
+            if ( i < right ) SortSlopesinside( slopeTiles, i, right );
         }
     }
 }
@@ -849,38 +849,38 @@ public class CSV_Reader : MonoBehaviour
 [System.Serializable]
 public struct SlopeTile
 {
-    public int _id;
-    public bool _isSpecial;
-    public bool _isLeft;
-    public bool _isBottom;
+    public int id;
+    public bool isSpecial;
+    public bool isLeft;
+    public bool isBottom;
 
     public SlopeTile( int id ) : this()
     {
-        _id = id;
+        id = id;
     }
 
     public SlopeTile( int id, bool isSpecial, bool isLeft, bool isBottom )
     {
-        _id = id;
-        _isSpecial = isSpecial;
-        _isLeft = isLeft;
-        _isBottom = isBottom;
+        id = id;
+        isSpecial = isSpecial;
+        isLeft = isLeft;
+        isBottom = isBottom;
     }
 }
 
 public struct BoolSlopeTile
 {
-    public bool _found;
-    public SlopeTile _slopeTile;
+    public bool found;
+    public SlopeTile slopeTile;
 
     public BoolSlopeTile( bool found ) : this()
     {
-        _found = found;
+        found = found;
     }
 
     public BoolSlopeTile( bool found, SlopeTile slopeTile )
     {
-        _found = found;
-        _slopeTile = slopeTile;
+        found = found;
+        slopeTile = slopeTile;
     }
 }
