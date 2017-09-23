@@ -1,124 +1,124 @@
 using UnityEngine;
 
-#if UNITY_ANDROID || UNITY_STANDALONE
+#if UNITYANDROID || UNITYSTANDALONE
 using SimpleJSON;
 #endif
 
 public class TilesObjectPooling : MonoBehaviour
 {
-#if UNITY_ANDROID || UNITY_STANDALONE
-    public bool _transparent = true;
-    public TextAsset _levelToLoad;
-    public bool _setParent;
-    public short _heightOfTheMap = 0;
-    public short _widthOfTheMap = 0;
-    public float _zAxisOffset = 0.1f;
-    Transform _transform;
-    byte _cameraSize;
-    float _heightOfScreen;
-    float _widthOfScreen;
-    Camera _camera;
-    Vector2 _lastCameraPos;
-    Transform _camTrans;
-    enum _Horizontal : byte { Left, Right, None };
-    enum _Vertical : byte { Up, Down, None };
-    bool _first = true;
-    short _lastEndX;
-    short _lastEndY;
-    short _startX;
-    short _startY;
-    short _lastStartX;
-    short _lastStartY;
-    short _endY;
-    short _endX;
+#if UNITYANDROID || UNITYSTANDALONE
+    public bool transparent = true;
+    public TextAsset levelToLoad;
+    public bool setParent;
+    public short heightOfTheMap = 0;
+    public short widthOfTheMap = 0;
+    public float zAxisOffset = 0.1f;
+    Transform transform;
+    byte cameraSize;
+    float heightOfScreen;
+    float widthOfScreen;
+    Camera camera;
+    Vector2 lastCameraPos;
+    Transform camTrans;
+    enum Horizontal : byte { Left, Right, None };
+    enum Vertical : byte { Up, Down, None };
+    bool first = true;
+    short lastEndX;
+    short lastEndY;
+    short startX;
+    short startY;
+    short lastStartX;
+    short lastStartY;
+    short endY;
+    short endX;
 
-    byte[,] _tilesPos;
-    GameObject[,] _tiles;
-    bool[] _poolOfThisTileIsEmpty;
+    byte[,] tilesPos;
+    GameObject[,] tiles;
+    bool[] poolOfThisTileIsEmpty;
 
     void Start()
     {
-#if UNITY_EDITOR
+#if UNITYEDITOR
 #else
-        _setParent = false;
+        setParent = false;
 #endif
-        _transform = GetComponent<Transform>();
-        _camera = Camera.main;
-        if ( _camera.orthographic )
+        transform = GetComponent<Transform>();
+        camera = Camera.main;
+        if ( camera.orthographic )
         {
-            _cameraSize = (byte)_camera.orthographicSize;
+            cameraSize = (byte)camera.orthographicSize;
         }
         else
         {
-            _cameraSize = (byte)( _camera.fieldOfView / 10 );
+            cameraSize = (byte)( camera.fieldOfView / 10 );
         }
 
-        _heightOfScreen = (float)( _cameraSize * 2 );
-        _widthOfScreen = ( (float)( Screen.width ) / ( Screen.height ) ) * _heightOfScreen;
-        _camTrans = Camera.main.transform;
-        _camera.GetComponent<BoxCollider2D>().size = new Vector2( _widthOfScreen, _heightOfScreen );
-        _poolOfThisTileIsEmpty = new bool[ DeadPoolHandler._DP_Handler._prefabs.GetLength( 0 ) ];
+        heightOfScreen = (float)( cameraSize * 2 );
+        widthOfScreen = ( (float)( Screen.width ) / ( Screen.height ) ) * heightOfScreen;
+        camTrans = Camera.main.transform;
+        camera.GetComponent<BoxCollider2D>().size = new Vector2( widthOfScreen, heightOfScreen );
+        poolOfThisTileIsEmpty = new bool[ DeadPoolHandler.DPHandler.prefabs.GetLength( 0 ) ];
 
         try
         {
-            string jsonMap = _levelToLoad.text;
+            string jsonMap = levelToLoad.text;
 
 
 
             SimpleJSON.JSONNode parser = JSON.Parse(jsonMap);
-            var __LayersCount = parser["layers"].Count;
-            var __jsonTiles = parser["layers"][__LayersCount - 1]["data"].AsArray;
-            _heightOfTheMap = (short)parser[ "layers" ][ __LayersCount - 1 ][ "height" ].AsInt;
-            _widthOfTheMap = (short)parser[ "layers" ][ __LayersCount - 1 ][ "width" ].AsInt;
-            _camera.GetComponent<MyOwnCamera>()._maxX = (short)( _widthOfTheMap - ( Mathf.Ceil( _widthOfScreen / 2 ) + 2 ) - 0 );
-            _camera.GetComponent<MyOwnCamera>()._maxY = (short)( ( ( _heightOfTheMap - ( Mathf.Ceil( _heightOfScreen / 2 ) + 1 ) ) * -1 ) + 0 );
-            _camera.GetComponent<MyOwnCamera>()._minX = (short)( Mathf.Round( _widthOfScreen / 2 ) + 0 );
-            _camera.GetComponent<MyOwnCamera>()._minY = (short)( ( Mathf.Ceil( _heightOfScreen / 2 ) * -1 ) - 0 );
-            byte[,] __tilesPos = new byte[_heightOfTheMap, _widthOfTheMap];
+            var LayersCount = parser["layers"].Count;
+            var jsonTiles = parser["layers"][LayersCount - 1]["data"].AsArray;
+            heightOfTheMap = (short)parser[ "layers" ][ LayersCount - 1 ][ "height" ].AsInt;
+            widthOfTheMap = (short)parser[ "layers" ][ LayersCount - 1 ][ "width" ].AsInt;
+            camera.GetComponent<MyOwnCamera>().maxX = (short)( widthOfTheMap - ( Mathf.Ceil( widthOfScreen / 2 ) + 2 ) - 0 );
+            camera.GetComponent<MyOwnCamera>().maxY = (short)( ( ( heightOfTheMap - ( Mathf.Ceil( heightOfScreen / 2 ) + 1 ) ) * -1 ) + 0 );
+            camera.GetComponent<MyOwnCamera>().minX = (short)( Mathf.Round( widthOfScreen / 2 ) + 0 );
+            camera.GetComponent<MyOwnCamera>().minY = (short)( ( Mathf.Ceil( heightOfScreen / 2 ) * -1 ) - 0 );
+            byte[,] tilesPos = new byte[heightOfTheMap, widthOfTheMap];
 
 
-            short __idOfLine = -1;
-            short __idOfColumn = _widthOfTheMap;
-            for ( int i = 0 ; i < __jsonTiles.Count ; i++ ) // The highest layer is on the end of the list
+            short idOfLine = -1;
+            short idOfColumn = widthOfTheMap;
+            for ( int i = 0 ; i < jsonTiles.Count ; i++ ) // The highest layer is on the end of the list
             {
-                ++__idOfColumn;
+                ++idOfColumn;
 
-                if ( __idOfColumn >= _widthOfTheMap )
+                if ( idOfColumn >= widthOfTheMap )
                 {
-                    ++__idOfLine;
-                    __idOfColumn = 0;
+                    ++idOfLine;
+                    idOfColumn = 0;
                 }
 
-                __tilesPos[ __idOfLine, __idOfColumn ] = (byte)__jsonTiles[ i ].AsInt;
+                tilesPos[ idOfLine, idOfColumn ] = (byte)jsonTiles[ i ].AsInt;
             }
-            for ( int z = __LayersCount - 2 ; z >= 0 ; --z ) // Why there is -2 ? Because lower layers begins from before the last place
+            for ( int z = LayersCount - 2 ; z >= 0 ; --z ) // Why there is -2 ? Because lower layers begins from before the last place
             {
-                __jsonTiles = parser[ "layers" ][ z ][ "data" ].AsArray;
-                var __heightOfTheMap = (short)parser["layers"][z]["height"].AsInt;
-                var __widthOfTheMap = (short)parser["layers"][z]["width"].AsInt;
-                if ( __widthOfTheMap > _widthOfTheMap ) __widthOfTheMap = _widthOfTheMap;
-                if ( __heightOfTheMap > _heightOfTheMap ) __heightOfTheMap = _heightOfTheMap;
-                __idOfLine = -1;
-                __idOfColumn = __widthOfTheMap;
+                jsonTiles = parser[ "layers" ][ z ][ "data" ].AsArray;
+                var heightOfTheMap = (short)parser["layers"][z]["height"].AsInt;
+                var widthOfTheMap = (short)parser["layers"][z]["width"].AsInt;
+                if ( widthOfTheMap > widthOfTheMap ) widthOfTheMap = widthOfTheMap;
+                if ( heightOfTheMap > heightOfTheMap ) heightOfTheMap = heightOfTheMap;
+                idOfLine = -1;
+                idOfColumn = widthOfTheMap;
 
-                for ( int i = 0 ; i < __jsonTiles.Count ; i++ )
+                for ( int i = 0 ; i < jsonTiles.Count ; i++ )
                 {
-                    ++__idOfColumn;
+                    ++idOfColumn;
 
-                    if ( __idOfColumn >= __widthOfTheMap )
+                    if ( idOfColumn >= widthOfTheMap )
                     {
-                        ++__idOfLine;
-                        if ( __idOfLine > __heightOfTheMap ) break;
-                        __idOfColumn = 0;
+                        ++idOfLine;
+                        if ( idOfLine > heightOfTheMap ) break;
+                        idOfColumn = 0;
                     }
 
-                    if ( __tilesPos[ __idOfLine, __idOfColumn ] == 0 ) __tilesPos[ __idOfLine, __idOfColumn ] = (byte)__jsonTiles[ i ].AsInt;
+                    if ( tilesPos[ idOfLine, idOfColumn ] == 0 ) tilesPos[ idOfLine, idOfColumn ] = (byte)jsonTiles[ i ].AsInt;
                 }
             }
-            _tilesPos = __tilesPos;
-            _tiles = new GameObject[ _heightOfTheMap, _widthOfTheMap ];
-            _ObjectPooling();
-            _lastCameraPos = _camTrans.position;
+            tilesPos = tilesPos;
+            tiles = new GameObject[ heightOfTheMap, widthOfTheMap ];
+            ObjectPooling();
+            lastCameraPos = camTrans.position;
         }
         catch ( System.Exception )
         {
@@ -129,399 +129,399 @@ public class TilesObjectPooling : MonoBehaviour
 
     void LateUpdate()
     {
-        if ( _camTrans.position.x != _lastCameraPos.x || _camTrans.position.y != _lastCameraPos.y )
+        if ( camTrans.position.x != lastCameraPos.x || camTrans.position.y != lastCameraPos.y )
         {
-            if ( _ObjectPooling() ) _lastCameraPos = _camTrans.position;
+            if ( ObjectPooling() ) lastCameraPos = camTrans.position;
         }
     }
 
-    bool _ObjectPooling()
+    bool ObjectPooling()
     {
         // Top left vertex of the screen
-        _startX = (short)Mathf.Round( _camTrans.position.x - ( _widthOfScreen / 2f ) );
-        _startY = (short)Mathf.Round( ( _camTrans.position.y * -1f ) - ( _heightOfScreen / 2 ) ); // Wysokość jest przeciwstawiana, bo współrzędne kamery są przeciwne do współrzędnych tablicy. Czyli pracujemy do góry nogami.
+        startX = (short)Mathf.Round( camTrans.position.x - ( widthOfScreen / 2f ) );
+        startY = (short)Mathf.Round( ( camTrans.position.y * -1f ) - ( heightOfScreen / 2 ) ); // Wysokość jest przeciwstawiana, bo współrzędne kamery są przeciwne do współrzędnych tablicy. Czyli pracujemy do góry nogami.
 
         // Bottom right vertex of the screen
-        _endY = (short)( _startY + _heightOfScreen );
-        _endX = (short)( _startX + _widthOfScreen + 1 );
+        endY = (short)( startY + heightOfScreen );
+        endX = (short)( startX + widthOfScreen + 1 );
 
-        if ( _startY < 0 ) return false; // We don't tolerate geting outside of the map
-        else if ( _startY >= _heightOfTheMap ) return false;
+        if ( startY < 0 ) return false; // We don't tolerate geting outside of the map
+        else if ( startY >= heightOfTheMap ) return false;
 
-        if ( _endY < 0 ) return false;
+        if ( endY < 0 ) return false;
 
-        if ( _startX < 0 ) return false;
-        else if ( _startX >= _widthOfTheMap ) return false;
+        if ( startX < 0 ) return false;
+        else if ( startX >= widthOfTheMap ) return false;
 
-        if ( _endX < 0 ) return false;
+        if ( endX < 0 ) return false;
 
-        if ( _endY >= _heightOfTheMap ) return false;
+        if ( endY >= heightOfTheMap ) return false;
 
-        if ( _endX >= _widthOfTheMap ) return false;
+        if ( endX >= widthOfTheMap ) return false;
 
         // We need to create tiles on the full screen
-        if ( _first )
+        if ( first )
         {
-            for ( short row = _startY ; row <= _endY ; ++row )
+            for ( short row = startY ; row <= endY ; ++row )
             {
-                for ( short column = _startX ; column <= _endX ; ++column )
+                for ( short column = startX ; column <= endX ; ++column )
                 {
-                    var __idOfTile = _tilesPos[row, column];
-                    if ( _transparent )
+                    var idOfTile = tilesPos[row, column];
+                    if ( transparent )
                     {
-                        if ( __idOfTile == 0 ) continue;
+                        if ( idOfTile == 0 ) continue;
                     }
-                    if ( !_poolOfThisTileIsEmpty[ __idOfTile ] )
+                    if ( !poolOfThisTileIsEmpty[ idOfTile ] )
                     {
-                        var __count = DeadPoolHandler._DP_Handler._pool[__idOfTile].Count;
-                        if ( __count == 0 )
+                        var count = DeadPoolHandler.DPHandler.pool[idOfTile].Count;
+                        if ( count == 0 )
                         {
-                            _poolOfThisTileIsEmpty[ __idOfTile ] = true;
+                            poolOfThisTileIsEmpty[ idOfTile ] = true;
                         }
                         else
                         {
-                            _tiles[ row, column ] = DeadPoolHandler._DP_Handler._pool[ __idOfTile ][ 0 ];
-                            DeadPoolHandler._DP_Handler._pool[ __idOfTile ].RemoveAt( 0 );
-                            _tiles[ row, column ].transform.position = new Vector3( column, -row, _zAxisOffset );
+                            tiles[ row, column ] = DeadPoolHandler.DPHandler.pool[ idOfTile ][ 0 ];
+                            DeadPoolHandler.DPHandler.pool[ idOfTile ].RemoveAt( 0 );
+                            tiles[ row, column ].transform.position = new Vector3( column, -row, zAxisOffset );
 
                             continue;
                         }
                     }
 
-                    _tiles[ row, column ] = Instantiate( DeadPoolHandler._DP_Handler._prefabs[ __idOfTile ], new Vector3( column, -row, _zAxisOffset ), Quaternion.identity ) as GameObject;
-#if UNITY_EDITOR
-                    if ( _setParent ) _tiles[ row, column ].GetComponent<Transform>().SetParent( _transform );
+                    tiles[ row, column ] = Instantiate( DeadPoolHandler.DPHandler.prefabs[ idOfTile ], new Vector3( column, -row, zAxisOffset ), Quaternion.identity ) as GameObject;
+#if UNITYEDITOR
+                    if ( setParent ) tiles[ row, column ].GetComponent<Transform>().SetParent( transform );
 #endif
                 }
             }
-            _first = false;
+            first = false;
             // We need last posistions to calculate which tiles to add or delete.
-            _lastEndX = _endX;
-            _lastEndY = _endY;
-            _lastStartX = _startX;
-            _lastStartY = _startY;
+            lastEndX = endX;
+            lastEndY = endY;
+            lastStartX = startX;
+            lastStartY = startY;
         }
         else
         {
-            if ( _endX != _lastEndX || _endY != _lastEndY || _startX != _lastStartX || _startY != _lastStartY )
+            if ( endX != lastEndX || endY != lastEndY || startX != lastStartX || startY != lastStartY )
             {
-                _CheckDiffBetCameraPos( _lastEndX, _lastEndY, _endX, _endY );
-                _lastEndX = _endX;
-                _lastEndY = _endY;
-                _lastStartX = _startX;
-                _lastStartY = _startY;
+                CheckDiffBetCameraPos( lastEndX, lastEndY, endX, endY );
+                lastEndX = endX;
+                lastEndY = endY;
+                lastStartX = startX;
+                lastStartY = startY;
             }
         }
 
         return true;
     }
 
-    void _CheckDiffBetCameraPos( short __lastX, short __lastY, short __curX, short __curY )
+    void CheckDiffBetCameraPos( short lastX, short lastY, short curX, short curY )
     {
-        short __diffY = 0;
-        short __diffX = 0;
+        short diffY = 0;
+        short diffX = 0;
         // Directions of move of camera
-        _Vertical __ver = _Vertical.None;
-        _Horizontal __hor = _Horizontal.None;
+        Vertical ver = Vertical.None;
+        Horizontal hor = Horizontal.None;
 
         // If camera goes down
-        if ( __curY > __lastY )
+        if ( curY > lastY )
         {
-            __diffY = _CalculateDiffY( __curY, __lastY );
-            __ver = _Vertical.Down; // We work upside down so if camera goes down in scene in arrays goes up.
+            diffY = CalculateDiffY( curY, lastY );
+            ver = Vertical.Down; // We work upside down so if camera goes down in scene in arrays goes up.
         }
         // If camera goes up
-        else if ( __curY < __lastY )
+        else if ( curY < lastY )
         {
-            __diffY = _CalculateDiffY( __lastY, __curY );
-            __ver = _Vertical.Up;
+            diffY = CalculateDiffY( lastY, curY );
+            ver = Vertical.Up;
         }
 
         // If camera goes right
-        if ( __curX > __lastX )
+        if ( curX > lastX )
         {
-            __diffX = _CalculateDiffX( __curX, __lastX );
-            __hor = _Horizontal.Right;
+            diffX = CalculateDiffX( curX, lastX );
+            hor = Horizontal.Right;
         }
         // If camera goes left
-        else if ( __curX < __lastX )
+        else if ( curX < lastX )
         {
-            __diffX = _CalculateDiffX( __lastX, __curX );
-            __hor = _Horizontal.Left;
+            diffX = CalculateDiffX( lastX, curX );
+            hor = Horizontal.Left;
         }
-        _CheckWhichTilesAdd( __hor, __ver, __diffX, __diffY );
+        CheckWhichTilesAdd( hor, ver, diffX, diffY );
     }
 
-    short _CalculateDiffY( short __bigger, short __lower )
+    short CalculateDiffY( short bigger, short lower )
     {
-        var __diffY = __bigger - __lower;
-        if ( __diffY > _heightOfScreen + 1 ) __diffY = (short)( _heightOfScreen + 1 ); // We need "+1" because in condition of deleting tiles there is include. Creating tiles method doesn't have include in condition.
-        return (short)__diffY;
+        var diffY = bigger - lower;
+        if ( diffY > heightOfScreen + 1 ) diffY = (short)( heightOfScreen + 1 ); // We need "+1" because in condition of deleting tiles there is include. Creating tiles method doesn't have include in condition.
+        return (short)diffY;
     }
 
-    short _CalculateDiffX( short __bigger, short __lower )
+    short CalculateDiffX( short bigger, short lower )
     {
-        var __diffX = __bigger - __lower;
-        if ( __diffX > _widthOfScreen + 2 ) __diffX = (short)( _widthOfScreen + 2 ); // We need "+2" becouse camera move is smooth. Without "+2" there will be blank edges on screen edges
-        return (short)__diffX;
+        var diffX = bigger - lower;
+        if ( diffX > widthOfScreen + 2 ) diffX = (short)( widthOfScreen + 2 ); // We need "+2" becouse camera move is smooth. Without "+2" there will be blank edges on screen edges
+        return (short)diffX;
     }
 
-    void _CheckWhichTilesAdd( _Horizontal __horDir, _Vertical __verDir, short __horDiff, short __verDiff )
+    void CheckWhichTilesAdd( Horizontal horDir, Vertical verDir, short horDiff, short verDiff )
     {
-        if ( __verDir == _Vertical.Down )
+        if ( verDir == Vertical.Down )
         {
-            if ( __horDir == _Horizontal.Right )
+            if ( horDir == Horizontal.Right )
             {
-                _DeleteOldTiles_V2( __verDiff, __horDiff, false, false );
-                _AddNewTiles_V2( __verDiff, __horDiff, true, true );
+                DeleteOldTilesV2( verDiff, horDiff, false, false );
+                AddNewTilesV2( verDiff, horDiff, true, true );
             }
             else
             {
-                _DeleteOldTiles_V2( __verDiff, __horDiff, true, false );
-                _AddNewTiles_V2( __verDiff, __horDiff, false, true );
+                DeleteOldTilesV2( verDiff, horDiff, true, false );
+                AddNewTilesV2( verDiff, horDiff, false, true );
             }
         }
         else
         {
-            if ( __horDir == _Horizontal.Right )
+            if ( horDir == Horizontal.Right )
             {
-                _DeleteOldTiles_V2( __verDiff, __horDiff, false, true );
-                _AddNewTiles_V2( __verDiff, __horDiff, true, false );
+                DeleteOldTilesV2( verDiff, horDiff, false, true );
+                AddNewTilesV2( verDiff, horDiff, true, false );
             }
             else
             {
-                _DeleteOldTiles_V2( __verDiff, __horDiff, true, true );
-                _AddNewTiles_V2( __verDiff, __horDiff, false, false );
+                DeleteOldTilesV2( verDiff, horDiff, true, true );
+                AddNewTilesV2( verDiff, horDiff, false, false );
             }
         }
     }
 
-    struct _FourShorts
+    struct FourShorts
     {
-        public short short_1;
-        public short short_2;
-        public short short_3;
-        public short short_4;
+        public short short1;
+        public short short2;
+        public short short3;
+        public short short4;
 
-        public _FourShorts( short short_1, short short_2, short short_3, short short_4 )
+        public FourShorts( short short1, short short2, short short3, short short4 )
         {
-            this.short_1 = short_1;
-            this.short_2 = short_2;
-            this.short_3 = short_3;
-            this.short_4 = short_4;
+            this.short1 = short1;
+            this.short2 = short2;
+            this.short3 = short3;
+            this.short4 = short4;
         }
     }
 
-    struct _TwoShorts
+    struct TwoShorts
     {
-        public short short_1;
-        public short short_2;
+        public short short1;
+        public short short2;
 
-        public _TwoShorts( short s1, short s2 )
+        public TwoShorts( short s1, short s2 )
         {
-            short_1 = s1;
-            short_2 = s2;
+            short1 = s1;
+            short2 = s2;
         }
     }
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="__diffY"></param>
-    /// <param name="__diffX"></param>
-    /// <param name="__verRight">Adding on the right ?</param>
-    /// <param name="__horDown">Adding at the bottom ?</param>
-    void _AddNewTiles_V2( short __diffY, short __diffX, bool __verRight, bool __horDown )
+    /// <param name="diffY"></param>
+    /// <param name="diffX"></param>
+    /// <param name="verRight">Adding on the right ?</param>
+    /// <param name="horDown">Adding at the bottom ?</param>
+    void AddNewTilesV2( short diffY, short diffX, bool verRight, bool horDown )
     {
-        _FourShorts __cur_StartXY_EndXY = new _FourShorts(_startX, _startY, _endX, _endY);
-        _TwoShorts __startEndVerColumns = new _TwoShorts(0, 0);
+        FourShorts curStartXYEndXY = new FourShorts(startX, startY, endX, endY);
+        TwoShorts startEndVerColumns = new TwoShorts(0, 0);
 
-        if ( __diffX != 0 )
+        if ( diffX != 0 )
         {
-            __startEndVerColumns = _GiveStartEndVerColumn( __diffX, __verRight, new _TwoShorts( __cur_StartXY_EndXY.short_1, __cur_StartXY_EndXY.short_3 ) );
-            _AddTiles( __startEndVerColumns.short_1, __startEndVerColumns.short_2, _startY, (short)( _endY + 1 ) );
+            startEndVerColumns = GiveStartEndVerColumn( diffX, verRight, new TwoShorts( curStartXYEndXY.short1, curStartXYEndXY.short3 ) );
+            AddTiles( startEndVerColumns.short1, startEndVerColumns.short2, startY, (short)( endY + 1 ) );
         }
 
-        if ( __diffY != 0 )
+        if ( diffY != 0 )
         {
-            _FourShorts __startEndHorColumns_And_StartEndHorRows = _GiveStartEndHorColumns_And_StartEndHorRows(__diffY, __diffX, __verRight, __horDown, __startEndVerColumns, __cur_StartXY_EndXY);
-            _AddTiles( __startEndHorColumns_And_StartEndHorRows.short_1,
-                __startEndHorColumns_And_StartEndHorRows.short_2,
-                __startEndHorColumns_And_StartEndHorRows.short_3,
-                __startEndHorColumns_And_StartEndHorRows.short_4 );
+            FourShorts startEndHorColumnsAndStartEndHorRows = GiveStartEndHorColumnsAndStartEndHorRows(diffY, diffX, verRight, horDown, startEndVerColumns, curStartXYEndXY);
+            AddTiles( startEndHorColumnsAndStartEndHorRows.short1,
+                startEndHorColumnsAndStartEndHorRows.short2,
+                startEndHorColumnsAndStartEndHorRows.short3,
+                startEndHorColumnsAndStartEndHorRows.short4 );
         }
     }
 
     /// <summary>
     /// First we deleting whole colums and then whole rows, or partly.
     /// </summary>
-    /// <param name="__diffY"></param>
-    /// <param name="__diffX"></param>
-    /// <param name="__verRight">Adding on the right ?</param>
-    /// <param name="__horDown">Adding at the bottom ?</param>
-    void _DeleteOldTiles_V2( short __diffY, short __diffX, bool __verRight, bool __horDown )
+    /// <param name="diffY"></param>
+    /// <param name="diffX"></param>
+    /// <param name="verRight">Adding on the right ?</param>
+    /// <param name="horDown">Adding at the bottom ?</param>
+    void DeleteOldTilesV2( short diffY, short diffX, bool verRight, bool horDown )
     {
-        _FourShorts __last_StartXY_EndXY = new _FourShorts(_lastStartX, _lastStartY, _lastEndX, _lastEndY);
-        _TwoShorts __startEndVerColumns = new _TwoShorts(0,0);
+        FourShorts lastStartXYEndXY = new FourShorts(lastStartX, lastStartY, lastEndX, lastEndY);
+        TwoShorts startEndVerColumns = new TwoShorts(0,0);
 
-        if ( __diffX != 0 )
+        if ( diffX != 0 )
         {
-            __startEndVerColumns = _GiveStartEndVerColumn( __diffX, __verRight, new _TwoShorts( __last_StartXY_EndXY.short_1, __last_StartXY_EndXY.short_3 ) );
-            _DeleteTiles( __startEndVerColumns.short_1, __startEndVerColumns.short_2, _lastStartY, (short)( _lastEndY + 1 ) );
+            startEndVerColumns = GiveStartEndVerColumn( diffX, verRight, new TwoShorts( lastStartXYEndXY.short1, lastStartXYEndXY.short3 ) );
+            DeleteTiles( startEndVerColumns.short1, startEndVerColumns.short2, lastStartY, (short)( lastEndY + 1 ) );
         }
 
-        if ( __diffY != 0 )
+        if ( diffY != 0 )
         {
-            _FourShorts __startEndHorColumns_And_StartEndHorRows = _GiveStartEndHorColumns_And_StartEndHorRows(__diffY, __diffX, __verRight, __horDown, __startEndVerColumns, __last_StartXY_EndXY);
-            _DeleteTiles( __startEndHorColumns_And_StartEndHorRows.short_1,
-                __startEndHorColumns_And_StartEndHorRows.short_2,
-                __startEndHorColumns_And_StartEndHorRows.short_3,
-                __startEndHorColumns_And_StartEndHorRows.short_4 );
+            FourShorts startEndHorColumnsAndStartEndHorRows = GiveStartEndHorColumnsAndStartEndHorRows(diffY, diffX, verRight, horDown, startEndVerColumns, lastStartXYEndXY);
+            DeleteTiles( startEndHorColumnsAndStartEndHorRows.short1,
+                startEndHorColumnsAndStartEndHorRows.short2,
+                startEndHorColumnsAndStartEndHorRows.short3,
+                startEndHorColumnsAndStartEndHorRows.short4 );
         }
     }
 
-    void _AddTiles( short __startColumn, short __endColumn, short __startRow, short __endRow )
+    void AddTiles( short startColumn, short endColumn, short startRow, short endRow )
     {
-        for ( short row = __startRow ; row < __endRow ; ++row )
+        for ( short row = startRow ; row < endRow ; ++row )
         {
-            for ( short column = __startColumn ; column < __endColumn ; ++column )
+            for ( short column = startColumn ; column < endColumn ; ++column )
             {
-                byte id = _tilesPos[row, column];
-                if ( _transparent )
+                byte id = tilesPos[row, column];
+                if ( transparent )
                 {
                     if ( id == 0 ) continue;
                 }
 
-                if ( !_poolOfThisTileIsEmpty[ id ] )
+                if ( !poolOfThisTileIsEmpty[ id ] )
                 {
-                    var __count = DeadPoolHandler._DP_Handler._pool[id].Count;
-                    if ( __count == 0 )
+                    var count = DeadPoolHandler.DPHandler.pool[id].Count;
+                    if ( count == 0 )
                     {
-                        _poolOfThisTileIsEmpty[ id ] = true;
+                        poolOfThisTileIsEmpty[ id ] = true;
                     }
                     else
                     {
-                        _tiles[ row, column ] = DeadPoolHandler._DP_Handler._pool[ id ][ 0 ];
-                        DeadPoolHandler._DP_Handler._pool[ id ].RemoveAt( 0 );
-                        _tiles[ row, column ].transform.position = new Vector3( column, -row, _zAxisOffset );
+                        tiles[ row, column ] = DeadPoolHandler.DPHandler.pool[ id ][ 0 ];
+                        DeadPoolHandler.DPHandler.pool[ id ].RemoveAt( 0 );
+                        tiles[ row, column ].transform.position = new Vector3( column, -row, zAxisOffset );
                         continue;
                     }
                 }
-                _tiles[ row, column ] = Instantiate( DeadPoolHandler._DP_Handler._prefabs[ id ], new Vector3( column, -row, _zAxisOffset ), Quaternion.identity ) as GameObject;
-                if ( _setParent ) _tiles[ row, column ].GetComponent<Transform>().SetParent( _transform );
+                tiles[ row, column ] = Instantiate( DeadPoolHandler.DPHandler.prefabs[ id ], new Vector3( column, -row, zAxisOffset ), Quaternion.identity ) as GameObject;
+                if ( setParent ) tiles[ row, column ].GetComponent<Transform>().SetParent( transform );
             }
         }
     }
 
-    void _DeleteTiles( short __startColumn, short __endColumn, short __startRow, short __endRow )
+    void DeleteTiles( short startColumn, short endColumn, short startRow, short endRow )
     {
-        for ( short row = __startRow ; row < __endRow ; ++row )
+        for ( short row = startRow ; row < endRow ; ++row )
         {
-            for ( short column = __startColumn ; column < __endColumn ; ++column )
+            for ( short column = startColumn ; column < endColumn ; ++column )
             {
-                var id = _tilesPos[row, column];
-                if ( _transparent )
+                var id = tilesPos[row, column];
+                if ( transparent )
                     if ( id == 0 ) continue;
                 
 
-                if ( !_tiles[ row, column ] ) { continue; }
+                if ( !tiles[ row, column ] ) { continue; }
 
-                if ( _poolOfThisTileIsEmpty[ id ] )
-                    _poolOfThisTileIsEmpty[ id ] = false;
+                if ( poolOfThisTileIsEmpty[ id ] )
+                    poolOfThisTileIsEmpty[ id ] = false;
                 
-                DeadPoolHandler._DP_Handler._pool[ id ].Add( _tiles[ row, column ].gameObject );
+                DeadPoolHandler.DPHandler.pool[ id ].Add( tiles[ row, column ].gameObject );
 
-                _tiles[ row, column ].transform.position = new Vector3( -10, 10, _zAxisOffset );
+                tiles[ row, column ].transform.position = new Vector3( -10, 10, zAxisOffset );
             }
         }
     }
 
-    _FourShorts _GiveStartEndHorColumns_And_StartEndHorRows( short __diffY, short __diffX, bool __verRight, bool __horDown, _TwoShorts __startEndVerColumns, _FourShorts __startXY_EndXY )
+    FourShorts GiveStartEndHorColumnsAndStartEndHorRows( short diffY, short diffX, bool verRight, bool horDown, TwoShorts startEndVerColumns, FourShorts startXYEndXY )
     {
-        _FourShorts __startEndHorColumns_And_StartEndHorRows = new _FourShorts(0, 0, 0, 0);
-        if ( __horDown )
+        FourShorts startEndHorColumnsAndStartEndHorRows = new FourShorts(0, 0, 0, 0);
+        if ( horDown )
         {
-            if ( __diffX != 0 )
+            if ( diffX != 0 )
             {
-                if ( __verRight )
+                if ( verRight )
                 {
-                    __startEndHorColumns_And_StartEndHorRows = new _FourShorts( __startXY_EndXY.short_1, __startEndVerColumns.short_1,// start, End Horizontal COLUMNS
-                        (short)( __startXY_EndXY.short_4 - __diffY + 1 ), (short)( __startXY_EndXY.short_4 + 1 ) );// start, End Horizontal ROWS
+                    startEndHorColumnsAndStartEndHorRows = new FourShorts( startXYEndXY.short1, startEndVerColumns.short1,// start, End Horizontal COLUMNS
+                        (short)( startXYEndXY.short4 - diffY + 1 ), (short)( startXYEndXY.short4 + 1 ) );// start, End Horizontal ROWS
                 }
                 else
                 {
-                    __startEndHorColumns_And_StartEndHorRows = new _FourShorts(
-                        (short)( __startEndVerColumns.short_2 ),
-                        (short)( __startXY_EndXY.short_3 + 1 ),
-                        (short)( __startXY_EndXY.short_4 - __diffY + 1 ),
-                        (short)( __startXY_EndXY.short_4 + 1 ) ); 
+                    startEndHorColumnsAndStartEndHorRows = new FourShorts(
+                        (short)( startEndVerColumns.short2 ),
+                        (short)( startXYEndXY.short3 + 1 ),
+                        (short)( startXYEndXY.short4 - diffY + 1 ),
+                        (short)( startXYEndXY.short4 + 1 ) ); 
                 }
             }
             else
             {
-                __startEndHorColumns_And_StartEndHorRows = new _FourShorts(
-                    __startXY_EndXY.short_1,
-                    (short)( __startXY_EndXY.short_3 + 1 ),
-                    (short)( __startXY_EndXY.short_4 - __diffY + 1 ),
-                    (short)( __startXY_EndXY.short_4 + 1 ) );
+                startEndHorColumnsAndStartEndHorRows = new FourShorts(
+                    startXYEndXY.short1,
+                    (short)( startXYEndXY.short3 + 1 ),
+                    (short)( startXYEndXY.short4 - diffY + 1 ),
+                    (short)( startXYEndXY.short4 + 1 ) );
             }
         }
         else
         {
-            if ( __diffX != 0 )
+            if ( diffX != 0 )
             {
-                if ( __verRight )
+                if ( verRight )
                 {
-                    __startEndHorColumns_And_StartEndHorRows = new _FourShorts( __startXY_EndXY.short_1, __startEndVerColumns.short_1,
-                        __startXY_EndXY.short_2, (short)( __startXY_EndXY.short_2 + __diffY ) );
+                    startEndHorColumnsAndStartEndHorRows = new FourShorts( startXYEndXY.short1, startEndVerColumns.short1,
+                        startXYEndXY.short2, (short)( startXYEndXY.short2 + diffY ) );
                 }
                 else
                 {
-                    __startEndHorColumns_And_StartEndHorRows = new _FourShorts( __startEndVerColumns.short_2, (short)( __startXY_EndXY.short_3 + 1 ),
-                        __startXY_EndXY.short_2, (short)( __startXY_EndXY.short_2 + __diffY ) );
+                    startEndHorColumnsAndStartEndHorRows = new FourShorts( startEndVerColumns.short2, (short)( startXYEndXY.short3 + 1 ),
+                        startXYEndXY.short2, (short)( startXYEndXY.short2 + diffY ) );
                 }
             }
             else
             {
-                __startEndHorColumns_And_StartEndHorRows = new _FourShorts( __startXY_EndXY.short_1, (short)( __startXY_EndXY.short_3 + 1 ),
-                    __startXY_EndXY.short_2, (short)( __startXY_EndXY.short_2 + __diffY ) );
+                startEndHorColumnsAndStartEndHorRows = new FourShorts( startXYEndXY.short1, (short)( startXYEndXY.short3 + 1 ),
+                    startXYEndXY.short2, (short)( startXYEndXY.short2 + diffY ) );
             }
         }
 
-        return __startEndHorColumns_And_StartEndHorRows;
+        return startEndHorColumnsAndStartEndHorRows;
     }
 
-    _TwoShorts _GiveStartEndVerColumn( short __diffX, bool __verRight, _TwoShorts __startX_EndX )
+    TwoShorts GiveStartEndVerColumn( short diffX, bool verRight, TwoShorts startXEndX )
     {
-        _TwoShorts __startEndVerColumns;
-        if ( __verRight )
+        TwoShorts startEndVerColumns;
+        if ( verRight )
         {
-            __startEndVerColumns.short_1 = (short)( __startX_EndX.short_2 - __diffX + 1 ); // start ; +1 because of inclusive in condition
-            __startEndVerColumns.short_2 = (short)( __startX_EndX.short_2 + 1 ); // end ; +1 because of exlusive in condition
+            startEndVerColumns.short1 = (short)( startXEndX.short2 - diffX + 1 ); // start ; +1 because of inclusive in condition
+            startEndVerColumns.short2 = (short)( startXEndX.short2 + 1 ); // end ; +1 because of exlusive in condition
         }
         else
         {
-            __startEndVerColumns.short_1 = __startX_EndX.short_1;
-            __startEndVerColumns.short_2 = (short)( __startX_EndX.short_1 + __diffX ); // Over here is not need of +1
+            startEndVerColumns.short1 = startXEndX.short1;
+            startEndVerColumns.short2 = (short)( startXEndX.short1 + diffX ); // Over here is not need of +1
         }
-        return __startEndVerColumns;
+        return startEndVerColumns;
     }
 
-    void _Print2D_Array( byte[,] __Array2D )
+    void Print2DArray( byte[,] Array2D )
     {
-        string __txt = "";
-        for ( int i = 0 ; i < __Array2D.GetLength( 0 ) ; ++i )
+        string txt = "";
+        for ( int i = 0 ; i < Array2D.GetLength( 0 ) ; ++i )
         {
-            for ( int o = 0 ; o < __Array2D.GetLength( 1 ) ; ++o )
+            for ( int o = 0 ; o < Array2D.GetLength( 1 ) ; ++o )
             {
-                __txt += __Array2D[ i, o ].ToString() + ",";
-                if ( o == __Array2D.GetLength( 1 ) - 1 )
+                txt += Array2D[ i, o ].ToString() + ",";
+                if ( o == Array2D.GetLength( 1 ) - 1 )
                 {
-                    __txt += "\n";
+                    txt += "\n";
                 }
             }
         }
-        print( __txt );
+        print( txt );
     }
 #endif
 }
