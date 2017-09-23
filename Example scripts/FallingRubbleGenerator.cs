@@ -3,229 +3,229 @@ using System.Collections.Generic;
 using UnityEngine;
 using MyDataTypes;
 using System;
-using n_Dust;
-#if UNITY_EDITOR
+using nDust;
+#if UNITYEDITOR
 [ExecuteInEditMode]
 #endif
 public class FallingRubbleGenerator : MonoBehaviour
 {
-#if UNITY_EDITOR
-    public Transform _leftTrans;
-    public Transform _rigtTrans;
-    public Transform _maxLevelTrans;
+#if UNITYEDITOR
+    public Transform leftTrans;
+    public Transform rigtTrans;
+    public Transform maxLevelTrans;
 
-    public Transform2[] _raycastPairsTrans;
+    public Transform2[] raycastPairsTrans;
     [Space]
-    public bool _save;
-    public bool _load;
-    public bool _saved;
+    public bool save;
+    public bool load;
+    public bool saved;
     [Space]
-    public GameObject _endPrefab;
-    public GameObject _pairPrefab;
-    public GameObject _maxLevelPrefab;
+    public GameObject endPrefab;
+    public GameObject pairPrefab;
+    public GameObject maxLevelPrefab;
     [Space]
-    public bool _genEnds;
-    public bool _endsExist;
+    public bool genEnds;
+    public bool endsExist;
     [Space]
-    public bool _genPair;
-    public bool _pairExist;
+    public bool genPair;
+    public bool pairExist;
     [Space]
-    public bool _genMax;
-    public bool _maxExist;
+    public bool genMax;
+    public bool maxExist;
 #endif
 
-    public float _frequency;
-    public int _maxAmount;
-    int _amount;
-    public float _maxLevel;
-    public bool _createDust;
-    
-    public LayerMask _whatIsGround;
-    float _distance;
-    public Pos2 _left_rightEnd;
-    public MyDataTypes.Float2[] _raycastPairs;
-    public float _dustTime;
-    public float _fallAfterDustTime;
-    Transform _playerTrans;
-    Transform _trans;
-    bool i_Create_isRunning;
+    public float frequency;
+    public int maxAmount;
+    int amount;
+    public float maxLevel;
+    public bool createDust;
 
-    private static int _fallenRubbleState = Animator.StringToHash("Base Layer.Fallen rubble");
-    private static int _emptyState = Animator.StringToHash("Base Layer.Empty");
+    public LayerMask whatIsGround;
+    float distance;
+    public Pos2 leftrightEnd;
+    public MyDataTypes.Float2[] raycastPairs;
+    public float dustTime;
+    public float fallAfterDustTime;
+    Transform playerTrans;
+    Transform trans;
+    bool iCreateisRunning;
+
+    private static int fallenRubbleState = Animator.StringToHash("Base Layer.Fallen rubble");
+    private static int emptyState = Animator.StringToHash("Base Layer.Empty");
 
     private void Start()
     {
         if ( Application.isPlaying )
         {
-            _trans = transform;
-            if ( _maxLevel > _trans.position.y ) _maxLevel = _trans.position.y - 1;
-            _distance = _trans.position.y - _maxLevel;
-            _playerTrans = ControllerOpt._player.transform;
+            trans = transform;
+            if ( maxLevel > trans.position.y ) maxLevel = trans.position.y - 1;
+            distance = trans.position.y - maxLevel;
+            playerTrans = ControllerOpt.player.transform;
         }
 
     }
 
-#if UNITY_EDITOR
+#if UNITYEDITOR
 
     private void Update()
     {
-        if ( _save && !_saved )
+        if ( save && !saved )
         {
-            _Save_InEditor();
-            _save = false;
-            _saved = true;
+            SaveInEditor();
+            save = false;
+            saved = true;
             UnityEditor.EditorUtility.SetDirty( this );
         }
 
-        if ( _load && _saved )
+        if ( load && saved )
         {
-            _Load_InEditor();
-            _load = false;
-            _saved = false;
+            LoadInEditor();
+            load = false;
+            saved = false;
             UnityEditor.EditorUtility.SetDirty( this );
         }
 
-        if ( _genEnds && !_endsExist )
+        if ( genEnds && !endsExist )
         {
-            _GenEnds();
-            _genEnds = false;
-            _endsExist = true;
+            GenEnds();
+            genEnds = false;
+            endsExist = true;
             UnityEditor.EditorUtility.SetDirty( this );
         }
 
-        if ( _genPair && !_pairExist )
+        if ( genPair && !pairExist )
         {
-            _GenPair();
-            _genPair = false;
-            _pairExist = true;
+            GenPair();
+            genPair = false;
+            pairExist = true;
             UnityEditor.EditorUtility.SetDirty( this );
         }
 
-        if ( _genMax && !_maxExist )
+        if ( genMax && !maxExist )
         {
-            _GenMax();
-            _genMax = false;
-            _maxExist = true;
+            GenMax();
+            genMax = false;
+            maxExist = true;
             UnityEditor.EditorUtility.SetDirty( this );
         }
     }
 
-    private void _GenMax()
+    private void GenMax()
     {
-        _maxLevelTrans = Instantiate( _maxLevelPrefab, new Vector2( transform.position.x, transform.position.y - 5 ), Quaternion.identity ).GetComponent<Transform>();
-        _maxLevelTrans.name = "Max level";
-        _maxLevelTrans.parent = transform;
+        maxLevelTrans = Instantiate( maxLevelPrefab, new Vector2( transform.position.x, transform.position.y - 5 ), Quaternion.identity ).GetComponent<Transform>();
+        maxLevelTrans.name = "Max level";
+        maxLevelTrans.parent = transform;
     }
 
-    private void _GenPair()
+    private void GenPair()
     {
-        Transform2[] __copy = new Transform2[_raycastPairsTrans.GetLength(0) + 1];
-        _raycastPairsTrans.CopyTo( __copy, 0 );
-        _raycastPairsTrans = new Transform2[ _raycastPairsTrans.GetLength( 0 ) + 1 ];
-        __copy.CopyTo( _raycastPairsTrans, 0 );
+        Transform2[] copy = new Transform2[raycastPairsTrans.GetLength(0) + 1];
+        raycastPairsTrans.CopyTo( copy, 0 );
+        raycastPairsTrans = new Transform2[ raycastPairsTrans.GetLength( 0 ) + 1 ];
+        copy.CopyTo( raycastPairsTrans, 0 );
 
-        int i = _raycastPairsTrans.GetLength(0) - 1;
-        Vector2 __leftPos = new Vector2(
+        int i = raycastPairsTrans.GetLength(0) - 1;
+        Vector2 leftPos = new Vector2(
             transform.position.x - 4,
             transform.position.y - 1
             );
 
-        Vector2 __rightPos = new Vector2(
+        Vector2 rightPos = new Vector2(
             transform.position.x + 4,
             transform.position.y - 1
             );
 
-        _raycastPairsTrans[ i ].firstTrans = Instantiate( _pairPrefab, __leftPos, Quaternion.identity ).GetComponent<Transform>();
-        _raycastPairsTrans[ i ].secondTrans = Instantiate( _pairPrefab, __rightPos, Quaternion.identity ).GetComponent<Transform>();
+        raycastPairsTrans[ i ].firstTrans = Instantiate( pairPrefab, leftPos, Quaternion.identity ).GetComponent<Transform>();
+        raycastPairsTrans[ i ].secondTrans = Instantiate( pairPrefab, rightPos, Quaternion.identity ).GetComponent<Transform>();
 
-        _raycastPairsTrans[ i ].firstTrans.name = "Pair_s left end " +
+        raycastPairsTrans[ i ].firstTrans.name = "Pairs left end " +
             i;
-        _raycastPairsTrans[ i ].secondTrans.name = "Pair_s right end " +
+        raycastPairsTrans[ i ].secondTrans.name = "Pairs right end " +
             i;
 
-        _raycastPairsTrans[ i ].firstTrans.parent = transform;
-        _raycastPairsTrans[ i ].secondTrans.parent = transform;
+        raycastPairsTrans[ i ].firstTrans.parent = transform;
+        raycastPairsTrans[ i ].secondTrans.parent = transform;
     }
 
-    private void _GenEnds()
+    private void GenEnds()
     {
-        Vector2 __leftPos = new Vector2(
+        Vector2 leftPos = new Vector2(
             transform.position.x - 5,
             transform.position.y
             );
 
-        Vector2 __rightPos = new Vector2(
+        Vector2 rightPos = new Vector2(
             transform.position.x + 5,
             transform.position.y
             );
 
-        _leftTrans = Instantiate( _endPrefab, __leftPos, Quaternion.identity ).GetComponent<Transform>();
-        _rigtTrans = Instantiate( _endPrefab, __rightPos, Quaternion.identity ).GetComponent<Transform>();
+        leftTrans = Instantiate( endPrefab, leftPos, Quaternion.identity ).GetComponent<Transform>();
+        rigtTrans = Instantiate( endPrefab, rightPos, Quaternion.identity ).GetComponent<Transform>();
 
-        _leftTrans.name = "Left End";
-        _rigtTrans.name = "Right End";
+        leftTrans.name = "Left End";
+        rigtTrans.name = "Right End";
 
-        _leftTrans.parent = transform;
-        _rigtTrans.parent = transform;
+        leftTrans.parent = transform;
+        rigtTrans.parent = transform;
     }
 
-    void _Save_InEditor()
+    void SaveInEditor()
     {
-        _left_rightEnd.first = new Vector2( _leftTrans.position.x, _leftTrans.position.y );
-        _left_rightEnd.second = new Vector2( _rigtTrans.position.x, _rigtTrans.position.y );
-        DestroyImmediate( _leftTrans.gameObject );
-        DestroyImmediate( _rigtTrans.gameObject );
+        leftrightEnd.first = new Vector2( leftTrans.position.x, leftTrans.position.y );
+        leftrightEnd.second = new Vector2( rigtTrans.position.x, rigtTrans.position.y );
+        DestroyImmediate( leftTrans.gameObject );
+        DestroyImmediate( rigtTrans.gameObject );
 
-        _maxLevel = _maxLevelTrans.position.y;
-        DestroyImmediate( _maxLevelTrans.gameObject );
+        maxLevel = maxLevelTrans.position.y;
+        DestroyImmediate( maxLevelTrans.gameObject );
 
-        _raycastPairs = new MyDataTypes.Float2[ _raycastPairsTrans.GetLength( 0 ) ];
-        for ( int i = 0 ; i < _raycastPairsTrans.GetLength( 0 ) ; i++ )
+        raycastPairs = new MyDataTypes.Float2[ raycastPairsTrans.GetLength( 0 ) ];
+        for ( int i = 0 ; i < raycastPairsTrans.GetLength( 0 ) ; i++ )
         {
-            if ( !_raycastPairsTrans[ i ].firstTrans ) continue;
+            if ( !raycastPairsTrans[ i ].firstTrans ) continue;
 
-            _raycastPairs[ i ].firstFloat = _raycastPairsTrans[ i ].firstTrans.position.x;
-            DestroyImmediate( _raycastPairsTrans[ i ].firstTrans.gameObject );
-            _raycastPairs[ i ].secondFloat = _raycastPairsTrans[ i ].secondTrans.position.x;
-            DestroyImmediate( _raycastPairsTrans[ i ].secondTrans.gameObject );
+            raycastPairs[ i ].firstFloat = raycastPairsTrans[ i ].firstTrans.position.x;
+            DestroyImmediate( raycastPairsTrans[ i ].firstTrans.gameObject );
+            raycastPairs[ i ].secondFloat = raycastPairsTrans[ i ].secondTrans.position.x;
+            DestroyImmediate( raycastPairsTrans[ i ].secondTrans.gameObject );
         }
 
-        if ( _raycastPairs.GetLength( 0 ) != 0 )
-            _SortPairs_InEditor( ref _raycastPairs, 0, _raycastPairs.GetLength( 0 ) - 1 );
+        if ( raycastPairs.GetLength( 0 ) != 0 )
+            SortPairsInEditor( ref raycastPairs, 0, raycastPairs.GetLength( 0 ) - 1 );
     }
 
-    void _Load_InEditor()
+    void LoadInEditor()
     {
-        _leftTrans = Instantiate( _endPrefab, new Vector2( _left_rightEnd.first.x, _left_rightEnd.first.y), Quaternion.identity ).GetComponent<Transform>();
-        _rigtTrans = Instantiate( _endPrefab, new Vector2( _left_rightEnd.second.x, _left_rightEnd.second.y ) , Quaternion.identity ).GetComponent<Transform>();
+        leftTrans = Instantiate( endPrefab, new Vector2( leftrightEnd.first.x, leftrightEnd.first.y), Quaternion.identity ).GetComponent<Transform>();
+        rigtTrans = Instantiate( endPrefab, new Vector2( leftrightEnd.second.x, leftrightEnd.second.y ) , Quaternion.identity ).GetComponent<Transform>();
 
-        _leftTrans.name = "Left End";
-        _rigtTrans.name = "Right End";
+        leftTrans.name = "Left End";
+        rigtTrans.name = "Right End";
 
-        _leftTrans.parent = transform;
-        _rigtTrans.parent = transform;
+        leftTrans.parent = transform;
+        rigtTrans.parent = transform;
 
-        _maxLevelTrans = Instantiate( _maxLevelPrefab, new Vector2( transform.position.x, _maxLevel ), Quaternion.identity ).GetComponent<Transform>();
-        _maxLevelTrans.name = "Max level";
-        _maxLevelTrans.parent = transform;
+        maxLevelTrans = Instantiate( maxLevelPrefab, new Vector2( transform.position.x, maxLevel ), Quaternion.identity ).GetComponent<Transform>();
+        maxLevelTrans.name = "Max level";
+        maxLevelTrans.parent = transform;
 
-        _raycastPairsTrans = new Transform2[ _raycastPairs.GetLength( 0 ) ];
-        for ( int i = 0 ; i < _raycastPairs.GetLength( 0 ) ; i++ )
+        raycastPairsTrans = new Transform2[ raycastPairs.GetLength( 0 ) ];
+        for ( int i = 0 ; i < raycastPairs.GetLength( 0 ) ; i++ )
         {
-            _raycastPairsTrans[ i ].firstTrans = Instantiate( _pairPrefab, new Vector2( _raycastPairs[ i ].firstFloat, transform.position.y - 1 ), Quaternion.identity ).GetComponent<Transform>();
-            _raycastPairsTrans[ i ].secondTrans = Instantiate( _pairPrefab, new Vector2( _raycastPairs[ i ].secondFloat, transform.position.y - 1 ), Quaternion.identity ).GetComponent<Transform>();
+            raycastPairsTrans[ i ].firstTrans = Instantiate( pairPrefab, new Vector2( raycastPairs[ i ].firstFloat, transform.position.y - 1 ), Quaternion.identity ).GetComponent<Transform>();
+            raycastPairsTrans[ i ].secondTrans = Instantiate( pairPrefab, new Vector2( raycastPairs[ i ].secondFloat, transform.position.y - 1 ), Quaternion.identity ).GetComponent<Transform>();
 
-            _raycastPairsTrans[ i ].firstTrans.name = "Pair_s left end " +
+            raycastPairsTrans[ i ].firstTrans.name = "Pairs left end " +
                 i;
-            _raycastPairsTrans[ i ].secondTrans.name = "Pair_s right end " +
+            raycastPairsTrans[ i ].secondTrans.name = "Pairs right end " +
                 i;
 
-            _raycastPairsTrans[ i ].firstTrans.parent = transform;
-            _raycastPairsTrans[ i ].secondTrans.parent = transform;
+            raycastPairsTrans[ i ].firstTrans.parent = transform;
+            raycastPairsTrans[ i ].secondTrans.parent = transform;
         }
     }
 
-    void _SortPairs_InEditor( ref MyDataTypes.Float2[] pairs, int left, int right )
+    void SortPairsInEditor( ref MyDataTypes.Float2[] pairs, int left, int right )
     {
         var i = left;
         var j = right;
@@ -241,169 +241,169 @@ public class FallingRubbleGenerator : MonoBehaviour
                 pairs[ j-- ] = tmp;
             }
         }
-        if ( left < j ) _SortPairs_InEditor( ref pairs, left, j );
-        if ( i < right ) _SortPairs_InEditor( ref pairs, i, right );
+        if ( left < j ) SortPairsInEditor( ref pairs, left, j );
+        if ( i < right ) SortPairsInEditor( ref pairs, i, right );
     }
 #endif
 
     private void FixedUpdate()
     {
-        if ( _playerTrans.position.y <= _trans.position.y && _playerTrans.position.x > _left_rightEnd.first.x - 17 && _playerTrans.position.x < _left_rightEnd.second.x + 17 && _playerTrans.position.y > _maxLevel )
+        if ( playerTrans.position.y <= trans.position.y && playerTrans.position.x > leftrightEnd.first.x - 17 && playerTrans.position.x < leftrightEnd.second.x + 17 && playerTrans.position.y > maxLevel )
         {
-            if ( !i_Create_isRunning )
-                StartCoroutine( "I_Create" );
+            if ( !iCreateisRunning )
+                StartCoroutine( "ICreate" );
         }
-        else if ( i_Create_isRunning )
+        else if ( iCreateisRunning )
         {
-            StopCoroutine( "I_Create" );
-            i_Create_isRunning = false;
+            StopCoroutine( "ICreate" );
+            iCreateisRunning = false;
         }
     }
 
-    IEnumerator I_Create()
+    IEnumerator ICreate()
     {
-        i_Create_isRunning = true;
+        iCreateisRunning = true;
         while ( true )
         {
-            if ( _amount <= _maxAmount )
-                _CreateFallingRubble();
-            yield return new WaitForSeconds( _frequency );
+            if ( amount <= maxAmount )
+                CreateFallingRubble();
+            yield return new WaitForSeconds( frequency );
         }
     }
 
-    void _CreateFallingRubble()
+    void CreateFallingRubble()
     {
-        Vector2 __randomPos = new Vector2(UnityEngine.Random.Range(_left_rightEnd.first.x, _left_rightEnd.second.x), _left_rightEnd.first.y );
-        bool __useRaycast = _CheckIfUseRaycast(__randomPos.x);
-        if ( __useRaycast )
+        Vector2 randomPos = new Vector2(UnityEngine.Random.Range(leftrightEnd.first.x, leftrightEnd.second.x), leftrightEnd.first.y );
+        bool useRaycast = CheckIfUseRaycast(randomPos.x);
+        if ( useRaycast )
         {
-            var hit = Physics2D.Raycast( __randomPos, Vector2.down, _distance, _whatIsGround );
+            var hit = Physics2D.Raycast( randomPos, Vector2.down, distance, whatIsGround );
             if ( hit )
-                _StartFall( hit.point.y, __randomPos );
+                StartFall( hit.point.y, randomPos );
             else
             {
-                _CreateFallingRubbleUsingCSV_Map( __randomPos );
+                CreateFallingRubbleUsingCSVMap( randomPos );
             }
         }
         else
         {
-            _CreateFallingRubbleUsingCSV_Map( __randomPos );
+            CreateFallingRubbleUsingCSVMap( randomPos );
         }
     }
 
-    void _CreateFallingRubbleUsingCSV_Map( Vector2 __pos )
+    void CreateFallingRubbleUsingCSVMap( Vector2 pos )
     {
-        var __thereIsGround_level = _CheckIfThereIsGroundUnderThisPos(__pos);
-        if ( __thereIsGround_level.boolean )
+        var thereIsGroundlevel = CheckIfThereIsGroundUnderThisPos(pos);
+        if ( thereIsGroundlevel.boolean )
         {
-            _StartFall( __thereIsGround_level._float, __pos );
+            StartFall( thereIsGroundlevel.float, pos );
         }
         else
         {
-            _StartFall( _maxLevel, __pos );
+            StartFall( maxLevel, pos );
         }
     }
 
-    void _StartFall( float __groundLevel, Vector2 __pos )
+    void StartFall( float groundLevel, Vector2 pos )
     {
-        if ( DeadPoolHandler._DP_Handler._fallingRubblePool_Transforms.Count == 0 )
+        if ( DeadPoolHandler.DPHandler.fallingRubblePoolTransforms.Count == 0 )
         {
-            var __trans = Instantiate(DeadPoolHandler._DP_Handler._fallingRubblePrefabForGenerator, __pos, Quaternion.identity).transform;
-            __trans.gameObject.SetActive( false );
-            StartCoroutine( I_Fall( __trans, __trans.GetComponent<Animator>(), __trans.GetComponent<BoxCollider2D>(), __groundLevel, false ) );
+            var trans = Instantiate(DeadPoolHandler.DPHandler.fallingRubblePrefabForGenerator, pos, Quaternion.identity).transform;
+            trans.gameObject.SetActive( false );
+            StartCoroutine( IFall( trans, trans.GetComponent<Animator>(), trans.GetComponent<BoxCollider2D>(), groundLevel, false ) );
         }
         else
         {
-            StartCoroutine( I_Fall( DeadPoolHandler._DP_Handler._fallingRubblePool_Transforms[ 0 ], DeadPoolHandler._DP_Handler._fallingRubblePool_Animators[ 0 ], DeadPoolHandler._DP_Handler._fallingRubblePool_BoxColliders[ 0 ], __groundLevel, true, __pos ) );
+            StartCoroutine( IFall( DeadPoolHandler.DPHandler.fallingRubblePoolTransforms[ 0 ], DeadPoolHandler.DPHandler.fallingRubblePoolAnimators[ 0 ], DeadPoolHandler.DPHandler.fallingRubblePoolBoxColliders[ 0 ], groundLevel, true, pos ) );
 
-            DeadPoolHandler._DP_Handler._fallingRubblePool_Transforms.RemoveAt( 0 );
-            DeadPoolHandler._DP_Handler._fallingRubblePool_Animators.RemoveAt( 0 );
-            DeadPoolHandler._DP_Handler._fallingRubblePool_BoxColliders.RemoveAt( 0 );
+            DeadPoolHandler.DPHandler.fallingRubblePoolTransforms.RemoveAt( 0 );
+            DeadPoolHandler.DPHandler.fallingRubblePoolAnimators.RemoveAt( 0 );
+            DeadPoolHandler.DPHandler.fallingRubblePoolBoxColliders.RemoveAt( 0 );
         }
     }
 
-    public IEnumerator I_Fall( Transform __trans, Animator __anim, BoxCollider2D __box2D, float __groundLevel, bool __changePosition, Vector2 __pos = default( Vector2 ) )
+    public IEnumerator IFall( Transform trans, Animator anim, BoxCollider2D box2D, float groundLevel, bool changePosition, Vector2 pos = default( Vector2 ) )
     {
-        ++_amount;
-        if ( __changePosition )
-            __trans.position = __pos;
-        if ( _createDust )
+        ++amount;
+        if ( changePosition )
+            trans.position = pos;
+        if ( createDust )
         {
-            yield return new WaitForSeconds( _dustTime );
-            if ( __changePosition )
-                Dust_s_Methods._CreateDust( __pos , this);
+            yield return new WaitForSeconds( dustTime );
+            if ( changePosition )
+                DustsMethods.CreateDust( pos, this );
             else
-                Dust_s_Methods._CreateDust( __trans.position, this );
+                DustsMethods.CreateDust( trans.position, this );
         }
 
-        yield return new WaitForSeconds( _fallAfterDustTime );
-        __trans.gameObject.SetActive( true );
-        __box2D.enabled = true;
-        __anim.ResetTrigger( "Destroy" );
-        float __distance = 0;
+        yield return new WaitForSeconds( fallAfterDustTime );
+        trans.gameObject.SetActive( true );
+        box2D.enabled = true;
+        anim.ResetTrigger( "Destroy" );
+        float distance = 0;
 
         while ( true )
         {
-            __trans.Translate( 0, -__distance * Time.deltaTime, 0 );
-            __distance += 9.8f * Time.deltaTime;
-            if ( __trans.position.y - __distance * Time.deltaTime <= __groundLevel )
+            trans.Translate( 0, -distance * Time.deltaTime, 0 );
+            distance += 9.8f * Time.deltaTime;
+            if ( trans.position.y - distance * Time.deltaTime <= groundLevel )
             {
                 yield return null;
-                __trans.position = new Vector2( __trans.position.x, __groundLevel );
+                trans.position = new Vector2( trans.position.x, groundLevel );
 
-                var __curState = __anim.GetCurrentAnimatorStateInfo( 0 );
-                if ( __curState.fullPathHash != _fallenRubbleState && __curState.fullPathHash != _emptyState )
+                var curState = anim.GetCurrentAnimatorStateInfo( 0 );
+                if ( curState.fullPathHash != fallenRubbleState && curState.fullPathHash != emptyState )
                 {
-                    __anim.SetTrigger( "Destroy" ); 
+                    anim.SetTrigger( "Destroy" );
                 }
 
-                __box2D.enabled = false; break;
+                box2D.enabled = false; break;
             }
             yield return null;
         }
         yield return new WaitForSeconds( 0.5f );
-        __anim.ResetTrigger( "Destroy" );
-        __anim.SetTrigger( "Idle" );
-        __trans.gameObject.SetActive( false );
-        __trans.position = new Vector3( -12, 12 );
-        DeadPoolHandler._DP_Handler._fallingRubblePool_Transforms.Add( __trans );
-        DeadPoolHandler._DP_Handler._fallingRubblePool_Animators.Add( __anim );
-        DeadPoolHandler._DP_Handler._fallingRubblePool_BoxColliders.Add( __box2D );
-        --_amount;
+        anim.ResetTrigger( "Destroy" );
+        anim.SetTrigger( "Idle" );
+        trans.gameObject.SetActive( false );
+        trans.position = new Vector3( -12, 12 );
+        DeadPoolHandler.DPHandler.fallingRubblePoolTransforms.Add( trans );
+        DeadPoolHandler.DPHandler.fallingRubblePoolAnimators.Add( anim );
+        DeadPoolHandler.DPHandler.fallingRubblePoolBoxColliders.Add( box2D );
+        --amount;
     }
 
-    BoolFloat _CheckIfThereIsGroundUnderThisPos( Vector2 __pos )
+    BoolFloat CheckIfThereIsGroundUnderThisPos( Vector2 pos )
     {
-        Int2 __corPos = new Int2( Mathf.RoundToInt((__pos.x )), -Mathf.RoundToInt(__pos.y - 1.5f));
-        int __maxId = -Mathf.FloorToInt(_maxLevel - 0.5f);
+        Int2 corPos = new Int2( Mathf.RoundToInt((pos.x )), -Mathf.RoundToInt(pos.y - 1.5f));
+        int maxId = -Mathf.FloorToInt(maxLevel - 0.5f);
 
-        for ( int i = __corPos.int2 ; i < __maxId ; i++ )
+        for ( int i = corPos.int2 ; i < maxId ; i++ )
         {
-            if ( CSV_Reader._csv_Reader._csvMap[ i, __corPos.int1 ] != -1 ) return new BoolFloat( true, -i + 0.375f );
+            if ( CSVReader.csvReader.csvMap[ i, corPos.int1 ] != -1 ) return new BoolFloat( true, -i + 0.375f );
         }
         return new BoolFloat( false, 0 );
     }
 
-    private bool _CheckIfUseRaycast( float x )
+    private bool CheckIfUseRaycast( float x )
     {
-        if ( _raycastPairs.GetLength( 0 ) == 0 ) return false;
+        if ( raycastPairs.GetLength( 0 ) == 0 ) return false;
 
-        if ( _raycastPairs[ 0 ].firstFloat > x ) return false;
+        if ( raycastPairs[ 0 ].firstFloat > x ) return false;
 
-        if ( _raycastPairs[ _raycastPairs.GetLength( 0 ) - 1 ].secondFloat < x ) return false;
+        if ( raycastPairs[ raycastPairs.GetLength( 0 ) - 1 ].secondFloat < x ) return false;
 
-        int __pair_sId = _FindClosestPair_sLeftEnd(x);
-        if ( _raycastPairs[ __pair_sId ].secondFloat > x )
+        int pairsId = FindClosestPairsLeftEnd(x);
+        if ( raycastPairs[ pairsId ].secondFloat > x )
             return true;
         else
             return false;
     }
 
-    int _FindClosestPair_sLeftEnd( float x )
+    int FindClosestPairsLeftEnd( float x )
     {
         int l, p, s;
         l = s = 0;
-        p = _raycastPairs.GetLength( 0 ) - 1;
+        p = raycastPairs.GetLength( 0 ) - 1;
         if ( p < 0 ) { return -100; }
 
 
@@ -411,17 +411,17 @@ public class FallingRubbleGenerator : MonoBehaviour
         {
             s = ( l + p ) / 2;
 
-            if ( _raycastPairs[ s ].firstFloat == x )
+            if ( raycastPairs[ s ].firstFloat == x )
             {
                 return s;
             }
 
-            if ( _raycastPairs[ s ].firstFloat < x )
+            if ( raycastPairs[ s ].firstFloat < x )
                 l = s + 1;
             else
                 p = s - 1;
         }
-        if ( s > 0 && _raycastPairs[ s ].firstFloat > x )
+        if ( s > 0 && raycastPairs[ s ].firstFloat > x )
             return s - 1;
         else
             return s;
