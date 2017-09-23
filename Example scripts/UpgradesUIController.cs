@@ -7,341 +7,341 @@ using Drones;
 
 public class UpgradesUIController : MonoBehaviour
 {
-    public static UpgradesUIController _upg;
+    public static UpgradesUIController upg;
 
-    public MainMenu _mMComp;
+    public MainMenu mMComp;
 
-    public int _money;
-    public DroneFireFighterUpgrades _fireFighterDroneUpg;
-    public DroneAmbulanceUpgrades _ambulaceDroneUpg;
-    public DroneSupplyUpgrades _supplyDroneUpg;
+    public int money;
+    public DroneFireFighterUpgrades fireFighterDroneUpg;
+    public DroneAmbulanceUpgrades ambulaceDroneUpg;
+    public DroneSupplyUpgrades supplyDroneUpg;
     [Space]
-    public Text _moneyText;
-    public Text _pointsText;
+    public Text moneyText;
+    public Text pointsText;
     [Header("Levels")]
-    public Button[] _upButtons;
-    public Text[] _lvlTexts;
-    public Button[] _downButtons;
-    public Text[] _footersTexts;
+    public Button[] upButtons;
+    public Text[] lvlTexts;
+    public Button[] downButtons;
+    public Text[] footersTexts;
     [Header("Pernament")]
-    public Button _upgEngButton;
-    public Text _engineLvlText;
-    public Text _upgEngPriceText;
-    public Text _upgEngBasePointsText;
+    public Button upgEngButton;
+    public Text engineLvlText;
+    public Text upgEngPriceText;
+    public Text upgEngBasePointsText;
 
-    public Button _decreaseTimeButton;
-    public Text _decreasingTimeAmountText;
-    public Text _decreaseTimePriceText;
-    public Text _decreaseTimeBaseText;
+    public Button decreaseTimeButton;
+    public Text decreasingTimeAmountText;
+    public Text decreaseTimePriceText;
+    public Text decreaseTimeBaseText;
     [Header("Skills")]
-    public Button _extinctionButton;
-    public Text _extNeededPointsTxt;
-    public Text _extPriceText;
+    public Button extinctionButton;
+    public Text extNeededPointsTxt;
+    public Text extPriceText;
     [Space]
-    public Image _droneImage;
+    public Image droneImage;
     [Header("Navigation")]
-    public Button _nextButton;
-    public Button _previousButton;
+    public Button nextButton;
+    public Button previousButton;
     [Space]
-    public Sprite _fireFiDrSprite;
-    public Sprite _ambDrSprite;
-    public Sprite _supDrSprite;
+    public Sprite fireFiDrSprite;
+    public Sprite ambDrSprite;
+    public Sprite supDrSprite;
 
 
     private void Awake()
     {
-        _upg = this;
+        upg = this;
     }
 
     #region Navigation
 
-    public void _BackToMainMenu()
+    public void BackToMainMenu()
     {
-        _mMComp.enabled = true;
+        mMComp.enabled = true;
         gameObject.SetActive( false );
     }
 
-    public void _SaveDataAndBackToMenu()
+    public void SaveDataAndBackToMenu()
     {
-        _SendDataToGameController();
-        GameController._gameCont._SavePlayersData();
-        GameController._gameCont._SaveUpgradesData();
-        _BackToMainMenu();
+        SendDataToGameController();
+        GameController.gameCont.SavePlayersData();
+        GameController.gameCont.SaveUpgradesData();
+        BackToMainMenu();
     }
 
     #endregion
 
     #region Firefighter Drone
 
-    public void _IncreaseArmorFireFDrone()
+    public void IncreaseArmorFireFDrone()
     {
-        _fireFighterDroneUpg._IncreaseArmor();
-        _UpdateFirefighterDrArmorText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.IncreaseArmor();
+        UpdateFirefighterDrArmorText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
-    public void _DecreaseArmorFireFDrone()
+    public void DecreaseArmorFireFDrone()
     {
-        _fireFighterDroneUpg._DecreaseArmor();
-        _UpdateFirefighterDrArmorText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
-    }
-
-    public void _IncreaseSpeedFireFDrone()
-    {
-        _fireFighterDroneUpg._IncreaseSpeed();
-        _UpdateFirefighterDrSpeedText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.DecreaseArmor();
+        UpdateFirefighterDrArmorText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _DecreaseSpeedFireFDrone()
+    public void IncreaseSpeedFireFDrone()
     {
-        _fireFighterDroneUpg._DecreaseSpeed();
-        _UpdateFirefighterDrSpeedText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.IncreaseSpeed();
+        UpdateFirefighterDrSpeedText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _UpgradeShorteningTimeFireFDrone()
+    public void DecreaseSpeedFireFDrone()
     {
-        _fireFighterDroneUpg._UpgradeShorteningTime( ref _money );
-        _SetDecreaseTimeAmountPriceAndBase( _fireFighterDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _fireFighterDroneUpg );
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.DecreaseSpeed();
+        UpdateFirefighterDrSpeedText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _UpgradeEngineFireFDrone()
+    public void UpgradeShorteningTimeFireFDrone()
     {
-        _fireFighterDroneUpg._UpgradeEngine( ref _money );
-        _SetEngineLvlPriceAndBaseText( _fireFighterDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _fireFighterDroneUpg );
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.UpgradeShorteningTime( ref money );
+        SetDecreaseTimeAmountPriceAndBase( fireFighterDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( fireFighterDroneUpg );
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _IncreaseAmmo()
+    public void UpgradeEngineFireFDrone()
     {
-        _fireFighterDroneUpg._IncreaseAmmo();
-        _UpdateFirefighterDrAmmoText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.UpgradeEngine( ref money );
+        SetEngineLvlPriceAndBaseText( fireFighterDroneUpg );
+        SetupEnginePriceAndBaseActivation( fireFighterDroneUpg );
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _DecreaseAmmo()
+    public void IncreaseAmmo()
     {
-        _fireFighterDroneUpg._DecreaseAmmo();
-        _UpdateFirefighterDrAmmoText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.IncreaseAmmo();
+        UpdateFirefighterDrAmmoText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _IncreaseExtincionSize()
+    public void DecreaseAmmo()
     {
-        _fireFighterDroneUpg._IncreaseExtincionSize();
-        _UpdateFirefighterDrExtSizeText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.DecreaseAmmo();
+        UpdateFirefighterDrAmmoText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
-    public void _DecreaseExtincionSize()
+    public void IncreaseExtincionSize()
     {
-        _fireFighterDroneUpg._DecreaseExtincionSize();
-        _UpdateFirefighterDrExtSizeText();
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        fireFighterDroneUpg.IncreaseExtincionSize();
+        UpdateFirefighterDrExtSizeText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
+    }
+
+    public void DecreaseExtincionSize()
+    {
+        fireFighterDroneUpg.DecreaseExtincionSize();
+        UpdateFirefighterDrExtSizeText();
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
     }
 
     #endregion
 
     #region Ambulance drone
 
-    public void _IncreaseArmorAmbDrone()
+    public void IncreaseArmorAmbDrone()
     {
-        _ambulaceDroneUpg._IncreaseArmor();
-        _UpdateAmbulanceDrArmorText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.IncreaseArmor();
+        UpdateAmbulanceDrArmorText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
-    public void _DecreaseArmorAmbDrone()
+    public void DecreaseArmorAmbDrone()
     {
-        _ambulaceDroneUpg._DecreaseArmor();
-        _UpdateAmbulanceDrArmorText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
-    }
-
-    public void _IncreaseSpeedAmbDrone()
-    {
-        _ambulaceDroneUpg._IncreaseSpeed();
-        _UpdateAmbulanceDrSpeedText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.DecreaseArmor();
+        UpdateAmbulanceDrArmorText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _DecreaseSpeedAmbDrone()
+    public void IncreaseSpeedAmbDrone()
     {
-        _ambulaceDroneUpg._DecreaseSpeed();
-        _UpdateAmbulanceDrSpeedText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.IncreaseSpeed();
+        UpdateAmbulanceDrSpeedText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _UpgradeShorteningTimeAmbDrone()
+    public void DecreaseSpeedAmbDrone()
     {
-        _ambulaceDroneUpg._UpgradeShorteningTime( ref _money );
-        _SetDecreaseTimeAmountPriceAndBase( _ambulaceDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _ambulaceDroneUpg );
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.DecreaseSpeed();
+        UpdateAmbulanceDrSpeedText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _UpgradeEngineAmbDrone()
+    public void UpgradeShorteningTimeAmbDrone()
     {
-        _ambulaceDroneUpg._UpgradeEngine( ref _money );
-        _SetEngineLvlPriceAndBaseText( _ambulaceDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _ambulaceDroneUpg );
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.UpgradeShorteningTime( ref money );
+        SetDecreaseTimeAmountPriceAndBase( ambulaceDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( ambulaceDroneUpg );
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _ToogleExtincionOnTargetSkillAmbDrone()
+    public void UpgradeEngineAmbDrone()
     {
-        _ambulaceDroneUpg._ToogleExtincionOnTargetSkill( ref _money );
-        _SetColorOfExtOnTargetButton( _ambulaceDroneUpg );
-        _SetExtOnTargetPriceAndSetupPointsAndPrice( _ambulaceDroneUpg );
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.UpgradeEngine( ref money );
+        SetEngineLvlPriceAndBaseText( ambulaceDroneUpg );
+        SetupEnginePriceAndBaseActivation( ambulaceDroneUpg );
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _IncreaseSlowDownDyingLevel()
+    public void ToogleExtincionOnTargetSkillAmbDrone()
     {
-        _ambulaceDroneUpg._IncreaseSlowDownDyingLevel();
-        _UpdateAmbulanceDrSlowDownText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.ToogleExtincionOnTargetSkill( ref money );
+        SetColorOfExtOnTargetButton( ambulaceDroneUpg );
+        SetExtOnTargetPriceAndSetupPointsAndPrice( ambulaceDroneUpg );
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
-    public void _DecreaseSlowDownDyingLevel()
+    public void IncreaseSlowDownDyingLevel()
     {
-        _ambulaceDroneUpg._DecreaseSlowDownDyingLevel();
-        _UpdateAmbulanceDrSlowDownText();
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        ambulaceDroneUpg.IncreaseSlowDownDyingLevel();
+        UpdateAmbulanceDrSlowDownText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
+    }
+
+    public void DecreaseSlowDownDyingLevel()
+    {
+        ambulaceDroneUpg.DecreaseSlowDownDyingLevel();
+        UpdateAmbulanceDrSlowDownText();
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
     }
 
     #endregion
 
     #region Supply drone
 
-    public void _IncreaseArmorSupDrone()
+    public void IncreaseArmorSupDrone()
     {
-        _supplyDroneUpg._IncreaseArmor();
-        _UpdateSupplyDrArmorText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.IncreaseArmor();
+        UpdateSupplyDrArmorText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
-    public void _DecreaseArmorSupDrone()
+    public void DecreaseArmorSupDrone()
     {
-        _supplyDroneUpg._DecreaseArmor();
-        _UpdateSupplyDrArmorText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
-    }
-
-    public void _IncreaseSpeedSupDrone()
-    {
-        _supplyDroneUpg._IncreaseSpeed();
-        _UpdateSupplyDrSpeedText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.DecreaseArmor();
+        UpdateSupplyDrArmorText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _DecreaseSpeedSupDrone()
+    public void IncreaseSpeedSupDrone()
     {
-        _supplyDroneUpg._DecreaseSpeed();
-        _UpdateSupplyDrSpeedText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.IncreaseSpeed();
+        UpdateSupplyDrSpeedText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _UpgradeShorteningTimeSupDrone()
+    public void DecreaseSpeedSupDrone()
     {
-        _supplyDroneUpg._UpgradeShorteningTime( ref _money );
-        _SetDecreaseTimeAmountPriceAndBase( _supplyDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _supplyDroneUpg );
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.DecreaseSpeed();
+        UpdateSupplyDrSpeedText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _UpgradeEngineSupDrone()
+    public void UpgradeShorteningTimeSupDrone()
     {
-        _supplyDroneUpg._UpgradeEngine( ref _money );
-        _SetEngineLvlPriceAndBaseText( _supplyDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _supplyDroneUpg );
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.UpgradeShorteningTime( ref money );
+        SetDecreaseTimeAmountPriceAndBase( supplyDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( supplyDroneUpg );
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _ToogleExtincionOnTargetSkillSupDrone()
+    public void UpgradeEngineSupDrone()
     {
-        _supplyDroneUpg._ToogleExtincionOnTargetSkill( ref _money );
-        _SetColorOfExtOnTargetButton( _supplyDroneUpg );
-        _SetExtOnTargetPriceAndSetupPointsAndPrice( _supplyDroneUpg );
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.UpgradeEngine( ref money );
+        SetEngineLvlPriceAndBaseText( supplyDroneUpg );
+        SetupEnginePriceAndBaseActivation( supplyDroneUpg );
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _IncreaseSizeOfPackage()
+    public void ToogleExtincionOnTargetSkillSupDrone()
     {
-        _supplyDroneUpg._IncreaseSizeOfPackage();
-        _UpdateSupplyDrPackageSizeText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.ToogleExtincionOnTargetSkill( ref money );
+        SetColorOfExtOnTargetButton( supplyDroneUpg );
+        SetExtOnTargetPriceAndSetupPointsAndPrice( supplyDroneUpg );
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _DecreaseSizeOfPackage()
+    public void IncreaseSizeOfPackage()
     {
-        _supplyDroneUpg._DecreaseSizeOfPackage();
-        _UpdateSupplyDrPackageSizeText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.IncreaseSizeOfPackage();
+        UpdateSupplyDrPackageSizeText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _IncreaseArmorPackage()
+    public void DecreaseSizeOfPackage()
     {
-        _supplyDroneUpg._IncreaseArmorPackage();
-        _UpdateSupplyDrPackageArmorText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.DecreaseSizeOfPackage();
+        UpdateSupplyDrPackageSizeText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
-    public void _DecreaseArmorPackage()
+    public void IncreaseArmorPackage()
     {
-        _supplyDroneUpg._DecreaseArmorPackage();
-        _UpdateSupplyDrPackageArmorText();
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        supplyDroneUpg.IncreaseArmorPackage();
+        UpdateSupplyDrPackageArmorText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
+    }
+
+    public void DecreaseArmorPackage()
+    {
+        supplyDroneUpg.DecreaseArmorPackage();
+        UpdateSupplyDrPackageArmorText();
+        UpdateMoneyAndPoints( supplyDroneUpg );
     }
 
     #endregion
 
-    public void _MakeSureThatDataIsCorrect()
+    public void MakeSureThatDataIsCorrect()
     {
-        _fireFighterDroneUpg._MakeSureThatStatsAreCorrect();
-        _ambulaceDroneUpg._MakeSureThatStatsAreCorrect();
-        _supplyDroneUpg._MakeSureThatStatsAreCorrect();
+        fireFighterDroneUpg.MakeSureThatStatsAreCorrect();
+        ambulaceDroneUpg.MakeSureThatStatsAreCorrect();
+        supplyDroneUpg.MakeSureThatStatsAreCorrect();
     }
 
     #region Activation
 
     #region Getters and Senders
 
-    public void _GetDataFromGameController()
+    public void GetDataFromGameController()
     {
-        _money = GameController._gameCont._playersData._money;
-        _fireFighterDroneUpg = new DroneFireFighterUpgrades(
-            GameController._gameCont._droneFireFiUpg._GetBasicStats(),
-            GameController._gameCont._droneFireFiUpg._GetDroneSkills(),
-            GameController._gameCont._droneFireFiUpg._FireFighterDroneLevels );
-        _ambulaceDroneUpg = new DroneAmbulanceUpgrades(
-            GameController._gameCont._droneAmbUpg._GetBasicStats(),
-            GameController._gameCont._droneAmbUpg._GetDroneSkills(),
-            GameController._gameCont._droneAmbUpg._AmbulanceDroneLevels );
-        _supplyDroneUpg = new DroneSupplyUpgrades(
-            GameController._gameCont._droneSupUpg._GetBasicStats(),
-            GameController._gameCont._droneSupUpg._GetDroneSkills(),
-            GameController._gameCont._droneSupUpg._SupplyDroneLvls );
+        money = GameController.gameCont.playersData.money;
+        fireFighterDroneUpg = new DroneFireFighterUpgrades(
+            GameController.gameCont.droneFireFiUpg.GetBasicStats(),
+            GameController.gameCont.droneFireFiUpg.GetDroneSkills(),
+            GameController.gameCont.droneFireFiUpg.FireFighterDroneLevels );
+        ambulaceDroneUpg = new DroneAmbulanceUpgrades(
+            GameController.gameCont.droneAmbUpg.GetBasicStats(),
+            GameController.gameCont.droneAmbUpg.GetDroneSkills(),
+            GameController.gameCont.droneAmbUpg.AmbulanceDroneLevels );
+        supplyDroneUpg = new DroneSupplyUpgrades(
+            GameController.gameCont.droneSupUpg.GetBasicStats(),
+            GameController.gameCont.droneSupUpg.GetDroneSkills(),
+            GameController.gameCont.droneSupUpg.SupplyDroneLvls );
     }
 
-    public void _SendDataToGameController()
+    public void SendDataToGameController()
     {
-        _MakeSureThatDataIsCorrect();
-        GameController._gameCont._playersData._money = _money;
-        GameController._gameCont._droneFireFiUpg = new DroneFireFighterUpgrades(
-            _fireFighterDroneUpg._GetBasicStats(),
-            _fireFighterDroneUpg._GetDroneSkills(),
-            _fireFighterDroneUpg._FireFighterDroneLevels);
-        GameController._gameCont._droneAmbUpg = new DroneAmbulanceUpgrades(
-            _ambulaceDroneUpg._GetBasicStats(),
-            _ambulaceDroneUpg._GetDroneSkills(),
-            _ambulaceDroneUpg._AmbulanceDroneLevels );
-        GameController._gameCont._droneSupUpg = new DroneSupplyUpgrades(
-            _supplyDroneUpg._GetBasicStats(),
-            _supplyDroneUpg._GetDroneSkills(),
-            _supplyDroneUpg._SupplyDroneLvls );
+        MakeSureThatDataIsCorrect();
+        GameController.gameCont.playersData.money = money;
+        GameController.gameCont.droneFireFiUpg = new DroneFireFighterUpgrades(
+            fireFighterDroneUpg.GetBasicStats(),
+            fireFighterDroneUpg.GetDroneSkills(),
+            fireFighterDroneUpg.FireFighterDroneLevels );
+        GameController.gameCont.droneAmbUpg = new DroneAmbulanceUpgrades(
+            ambulaceDroneUpg.GetBasicStats(),
+            ambulaceDroneUpg.GetDroneSkills(),
+            ambulaceDroneUpg.AmbulanceDroneLevels );
+        GameController.gameCont.droneSupUpg = new DroneSupplyUpgrades(
+            supplyDroneUpg.GetBasicStats(),
+            supplyDroneUpg.GetDroneSkills(),
+            supplyDroneUpg.SupplyDroneLvls );
     }
 
     #endregion
@@ -350,147 +350,147 @@ public class UpgradesUIController : MonoBehaviour
 
     #region Setters
 
-    void _UpdateMoneyAndPoints(DroneUpgrades __droneUpgrades)
+    void UpdateMoneyAndPoints( DroneUpgrades droneUpgrades )
     {
-        _moneyText.text = "Money: " + _money;
-        _pointsText.text = "Points: " + __droneUpgrades._GetBasicStats()._availablePoints;
+        moneyText.text = "Money: " + money;
+        pointsText.text = "Points: " + droneUpgrades.GetBasicStats().availablePoints;
 
     }
 
-    void _SetActiveButtons( Text[] __buttons, int __from, bool __activate = true )
+    void SetActiveButtons( Text[] buttons, int from, bool activate = true )
     {
-        for ( int id = __from ; id < __buttons.GetLength( 0 ) ; id++ )
+        for ( int id = from ; id < buttons.GetLength( 0 ) ; id++ )
         {
-            __buttons[ id ].transform.parent.gameObject.SetActive( __activate );
+            buttons[ id ].transform.parent.gameObject.SetActive( activate );
         }
     }
 
-    void _SetLvlText0( int __value )
+    void SetLvlText0( int value )
     {
-        _SetLvlText( 0, __value );
+        SetLvlText( 0, value );
     }
 
-    void _SetLvlText1( int __value )
+    void SetLvlText1( int value )
     {
-        _SetLvlText( 1, __value );
+        SetLvlText( 1, value );
     }
 
-    void _SetLvlText2( int __value )
+    void SetLvlText2( int value )
     {
-        _SetLvlText( 2, __value );
+        SetLvlText( 2, value );
     }
 
-    void _SetLvlText3( int __value )
+    void SetLvlText3( int value )
     {
-        _SetLvlText( 3, __value );
+        SetLvlText( 3, value );
     }
 
-    void _SetLvlText( int __id, int __value )
+    void SetLvlText( int id, int value )
     {
-        _lvlTexts[ __id ].text = (__value + 1).ToString();
+        lvlTexts[ id ].text = ( value + 1 ).ToString();
     }
 
-    void _SetColorOfExtOnTargetButton( DroneUpgrades __droneUpgrades )
+    void SetColorOfExtOnTargetButton( DroneUpgrades droneUpgrades )
     {
-        bool __active = __droneUpgrades._GetDroneSkills()._extinctionOnReachingTargetIsActive;
-        if ( __active )
-            _extinctionButton.GetComponent<Image>().color = Color.green;
+        bool active = droneUpgrades.GetDroneSkills().extinctionOnReachingTargetIsActive;
+        if ( active )
+            extinctionButton.GetComponent<Image>().color = Color.green;
         else
-            _extinctionButton.GetComponent<Image>().color = Color.white;
+            extinctionButton.GetComponent<Image>().color = Color.white;
     }
 
-    void _SetEngineLvlPriceAndBaseText( DroneUpgrades __droneUpgrades )
+    void SetEngineLvlPriceAndBaseText( DroneUpgrades droneUpgrades )
     {
-        _engineLvlText.text = "Lvl: " + (__droneUpgrades._GetBasicStats()._engineLevel + 1).ToString();
-        _upgEngPriceText.text = "Price:\n" + ( __droneUpgrades._GetBasicStats()._engineBaseCost * ( __droneUpgrades._GetBasicStats()._engineLevel + 1 ) ).ToString();
-        _upgEngBasePointsText.text = "+" + __droneUpgrades._GetBasicStats()._pointsPerEngineLvl + " Points";
+        engineLvlText.text = "Lvl: " + ( droneUpgrades.GetBasicStats().engineLevel + 1 ).ToString();
+        upgEngPriceText.text = "Price:\n" + ( droneUpgrades.GetBasicStats().engineBaseCost * ( droneUpgrades.GetBasicStats().engineLevel + 1 ) ).ToString();
+        upgEngBasePointsText.text = "+" + droneUpgrades.GetBasicStats().pointsPerEngineLvl + " Points";
     }
 
-    void _SetDecreaseTimeAmountPriceAndBase( DroneUpgrades __droneUpgrades )
+    void SetDecreaseTimeAmountPriceAndBase( DroneUpgrades droneUpgrades )
     {
-        _decreasingTimeAmountText.text = "-" + ( __droneUpgrades._GetBasicStats()._baseShorteningTime * __droneUpgrades._GetBasicStats()._shorteningCoolingDownTimeLevel ).ToString() + "s";
-        _decreaseTimePriceText.text = "Price:\n" + ( __droneUpgrades._GetBasicStats()._shorteningTimeBaseCost * ( __droneUpgrades._GetBasicStats()._shorteningCoolingDownTimeLevel + 1 ) ).ToString();
-        _decreaseTimeBaseText.text = "-" + __droneUpgrades._GetBasicStats()._baseShorteningTime.ToString() + "s";
+        decreasingTimeAmountText.text = "-" + ( droneUpgrades.GetBasicStats().baseShorteningTime * droneUpgrades.GetBasicStats().shorteningCoolingDownTimeLevel ).ToString() + "s";
+        decreaseTimePriceText.text = "Price:\n" + ( droneUpgrades.GetBasicStats().shorteningTimeBaseCost * ( droneUpgrades.GetBasicStats().shorteningCoolingDownTimeLevel + 1 ) ).ToString();
+        decreaseTimeBaseText.text = "-" + droneUpgrades.GetBasicStats().baseShorteningTime.ToString() + "s";
     }
 
-    void _SetupEnginePriceAndBaseActivation( DroneUpgrades __droneUpgrade )
+    void SetupEnginePriceAndBaseActivation( DroneUpgrades droneUpgrade )
     {
-        if ( __droneUpgrade._GetBasicStats()._engineLevel >= __droneUpgrade._GetBasicStats()._maxEngineLvl )
+        if ( droneUpgrade.GetBasicStats().engineLevel >= droneUpgrade.GetBasicStats().maxEngineLvl )
         {
-            _upgEngPriceText.gameObject.SetActive( false );
-            _upgEngBasePointsText.gameObject.SetActive( false );
+            upgEngPriceText.gameObject.SetActive( false );
+            upgEngBasePointsText.gameObject.SetActive( false );
         }
         else
         {
-            _upgEngPriceText.gameObject.SetActive( true );
-            _upgEngBasePointsText.gameObject.SetActive( true );
+            upgEngPriceText.gameObject.SetActive( true );
+            upgEngBasePointsText.gameObject.SetActive( true );
         }
-            
+
     }
 
-    void _SetupDecreaseTimePriceAndBaseActivation( DroneUpgrades __droneUpgrades )
+    void SetupDecreaseTimePriceAndBaseActivation( DroneUpgrades droneUpgrades )
     {
-        if ( __droneUpgrades._GetBasicStats()._shorteningCoolingDownTimeLevel >= __droneUpgrades._GetBasicStats()._maxShorteningTimeLevel )
+        if ( droneUpgrades.GetBasicStats().shorteningCoolingDownTimeLevel >= droneUpgrades.GetBasicStats().maxShorteningTimeLevel )
         {
-            _decreaseTimePriceText.gameObject.SetActive( false );
-            _decreaseTimeBaseText.gameObject.SetActive( false );
+            decreaseTimePriceText.gameObject.SetActive( false );
+            decreaseTimeBaseText.gameObject.SetActive( false );
         }
         else
         {
-            _decreaseTimePriceText.gameObject.SetActive( true );
-            _decreaseTimeBaseText.gameObject.SetActive( true );
+            decreaseTimePriceText.gameObject.SetActive( true );
+            decreaseTimeBaseText.gameObject.SetActive( true );
         }
-            
+
     }
 
-    void _SetExtOnTargetNeededPointsText( DroneUpgrades __droneUpgrades )
+    void SetExtOnTargetNeededPointsText( DroneUpgrades droneUpgrades )
     {
-        _extNeededPointsTxt.text = "Needed points:\n" + __droneUpgrades._GetDroneSkills()._extinctionOnReachingTargetPointsCost;
+        extNeededPointsTxt.text = "Needed points:\n" + droneUpgrades.GetDroneSkills().extinctionOnReachingTargetPointsCost;
     }
 
-    void _SetExtOnTargetPriceText( DroneUpgrades __droneUpgrade )
+    void SetExtOnTargetPriceText( DroneUpgrades droneUpgrade )
     {
-        _extPriceText.text = "Price:\n" + __droneUpgrade._GetDroneSkills()._extinctionOnReachingTargetMoneyCost;
+        extPriceText.text = "Price:\n" + droneUpgrade.GetDroneSkills().extinctionOnReachingTargetMoneyCost;
     }
 
-    void _SetupExtOnTargetNeededPointsText( DroneUpgrades __droneUpgrades )
+    void SetupExtOnTargetNeededPointsText( DroneUpgrades droneUpgrades )
     {
-        if ( __droneUpgrades._GetDroneSkills()._extinctionOnReachingTargetIsActive )
-            _extNeededPointsTxt.gameObject.SetActive( false );
+        if ( droneUpgrades.GetDroneSkills().extinctionOnReachingTargetIsActive )
+            extNeededPointsTxt.gameObject.SetActive( false );
         else
-            _extNeededPointsTxt.gameObject.SetActive( true );
+            extNeededPointsTxt.gameObject.SetActive( true );
     }
 
-    void _SetupExtOnTargetPriceText( DroneUpgrades __droneUpgrades )
+    void SetupExtOnTargetPriceText( DroneUpgrades droneUpgrades )
     {
-        if ( __droneUpgrades._GetDroneSkills()._extinctionOnReachingTargetIsActive || __droneUpgrades._GetDroneSkills()._extinctionOnReachingTargetHasBeenBought)
-            _extPriceText.gameObject.SetActive( false );
+        if ( droneUpgrades.GetDroneSkills().extinctionOnReachingTargetIsActive || droneUpgrades.GetDroneSkills().extinctionOnReachingTargetHasBeenBought )
+            extPriceText.gameObject.SetActive( false );
         else
-            _extPriceText.gameObject.SetActive( true );
+            extPriceText.gameObject.SetActive( true );
     }
 
-    void _SetExtOnTargetPriceAndSetupPointsAndPrice( DroneUpgrades __droneUpgrades)
+    void SetExtOnTargetPriceAndSetupPointsAndPrice( DroneUpgrades droneUpgrades )
     {
-        _SetExtOnTargetPriceText( __droneUpgrades );
-        _SetupExtOnTargetNeededPointsText( __droneUpgrades );
-        _SetupExtOnTargetPriceText( __droneUpgrades );
+        SetExtOnTargetPriceText( droneUpgrades );
+        SetupExtOnTargetNeededPointsText( droneUpgrades );
+        SetupExtOnTargetPriceText( droneUpgrades );
     }
     #endregion
 
     #region Removers
 
-    void _RemoveAllListenersFromButtons( Button[] __buttons )
+    void RemoveAllListenersFromButtons( Button[] buttons )
     {
-        foreach ( var __button in __buttons )
+        foreach ( var button in buttons )
         {
-            __button.onClick.RemoveAllListeners();
+            button.onClick.RemoveAllListeners();
         }
     }
 
-    void _RemoveAllListenersFromNav()
+    void RemoveAllListenersFromNav()
     {
-        _nextButton.onClick.RemoveAllListeners();
-        _previousButton.onClick.RemoveAllListeners();
+        nextButton.onClick.RemoveAllListeners();
+        previousButton.onClick.RemoveAllListeners();
     }
 
     #endregion
@@ -499,222 +499,222 @@ public class UpgradesUIController : MonoBehaviour
 
     #region Firefighter drone
 
-    public void _ActivateFirefighterDroneUpgrades()
+    public void ActivateFirefighterDroneUpgrades()
     {
-        _UpdateMoneyAndPoints( _fireFighterDroneUpg );
+        UpdateMoneyAndPoints( fireFighterDroneUpg );
 
-        _SetActiveButtons( _lvlTexts, 0 );
-        _RemoveAllListenersFromButtons( _upButtons );
-        _RemoveAllListenersFromButtons( _downButtons );
+        SetActiveButtons( lvlTexts, 0 );
+        RemoveAllListenersFromButtons( upButtons );
+        RemoveAllListenersFromButtons( downButtons );
 
-        _upButtons[ 0 ].onClick.AddListener( new UnityAction( _IncreaseArmorFireFDrone ) );
-        _upButtons[ 1 ].onClick.AddListener( new UnityAction( _IncreaseSpeedFireFDrone ) );
-        _upButtons[ 2 ].onClick.AddListener( new UnityAction( _IncreaseAmmo ) );
-        _upButtons[ 3 ].onClick.AddListener( new UnityAction( _IncreaseExtincionSize ) );
+        upButtons[ 0 ].onClick.AddListener( new UnityAction( IncreaseArmorFireFDrone ) );
+        upButtons[ 1 ].onClick.AddListener( new UnityAction( IncreaseSpeedFireFDrone ) );
+        upButtons[ 2 ].onClick.AddListener( new UnityAction( IncreaseAmmo ) );
+        upButtons[ 3 ].onClick.AddListener( new UnityAction( IncreaseExtincionSize ) );
 
-        _downButtons[ 0 ].onClick.AddListener( new UnityAction( _DecreaseArmorFireFDrone ) );
-        _downButtons[ 1 ].onClick.AddListener( new UnityAction( _DecreaseSpeedFireFDrone ) );
-        _downButtons[ 2 ].onClick.AddListener( new UnityAction( _DecreaseAmmo ) );
-        _downButtons[ 3 ].onClick.AddListener( new UnityAction( _DecreaseExtincionSize ) );
+        downButtons[ 0 ].onClick.AddListener( new UnityAction( DecreaseArmorFireFDrone ) );
+        downButtons[ 1 ].onClick.AddListener( new UnityAction( DecreaseSpeedFireFDrone ) );
+        downButtons[ 2 ].onClick.AddListener( new UnityAction( DecreaseAmmo ) );
+        downButtons[ 3 ].onClick.AddListener( new UnityAction( DecreaseExtincionSize ) );
 
-        _footersTexts[ 0 ].text = "Armor";
-        _footersTexts[ 1 ].text = "Speed";
-        _footersTexts[ 2 ].text = "Ammo";
-        _footersTexts[ 3 ].text = "Extinction size";
+        footersTexts[ 0 ].text = "Armor";
+        footersTexts[ 1 ].text = "Speed";
+        footersTexts[ 2 ].text = "Ammo";
+        footersTexts[ 3 ].text = "Extinction size";
 
-        _UpdateFirefighterDrArmorText();
-        _UpdateFirefighterDrSpeedText();
-        _UpdateFirefighterDrAmmoText();
-        _UpdateFirefighterDrExtSizeText();
+        UpdateFirefighterDrArmorText();
+        UpdateFirefighterDrSpeedText();
+        UpdateFirefighterDrAmmoText();
+        UpdateFirefighterDrExtSizeText();
 
-        _upgEngButton.gameObject.SetActive( true );
-        _decreaseTimeButton.gameObject.SetActive( true );
-        _upgEngButton.onClick.RemoveAllListeners();
-        _decreaseTimeButton.onClick.RemoveAllListeners();
-        _upgEngButton.onClick.AddListener( new UnityAction( _UpgradeEngineFireFDrone ) );
-        _decreaseTimeButton.onClick.AddListener( new UnityAction( _UpgradeShorteningTimeFireFDrone ) );
+        upgEngButton.gameObject.SetActive( true );
+        decreaseTimeButton.gameObject.SetActive( true );
+        upgEngButton.onClick.RemoveAllListeners();
+        decreaseTimeButton.onClick.RemoveAllListeners();
+        upgEngButton.onClick.AddListener( new UnityAction( UpgradeEngineFireFDrone ) );
+        decreaseTimeButton.onClick.AddListener( new UnityAction( UpgradeShorteningTimeFireFDrone ) );
 
-        _SetEngineLvlPriceAndBaseText( _fireFighterDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _fireFighterDroneUpg );
-        _SetDecreaseTimeAmountPriceAndBase( _fireFighterDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _fireFighterDroneUpg );
+        SetEngineLvlPriceAndBaseText( fireFighterDroneUpg );
+        SetupEnginePriceAndBaseActivation( fireFighterDroneUpg );
+        SetDecreaseTimeAmountPriceAndBase( fireFighterDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( fireFighterDroneUpg );
 
-        _extinctionButton.gameObject.SetActive( false );
-        _droneImage.sprite = _fireFiDrSprite;
+        extinctionButton.gameObject.SetActive( false );
+        droneImage.sprite = fireFiDrSprite;
 
-        _RemoveAllListenersFromNav();
-        _nextButton.onClick.AddListener( new UnityAction( _ActivateAmbulanceDroneUpgrades ) );
+        RemoveAllListenersFromNav();
+        nextButton.onClick.AddListener( new UnityAction( ActivateAmbulanceDroneUpgrades ) );
     }
 
 
 
-    private void _UpdateFirefighterDrArmorText()
+    private void UpdateFirefighterDrArmorText()
     {
-        _SetLvlText0( _fireFighterDroneUpg._GetBasicStats()._armorLvl);
+        SetLvlText0( fireFighterDroneUpg.GetBasicStats().armorLvl );
     }
 
-    private void _UpdateFirefighterDrSpeedText()
+    private void UpdateFirefighterDrSpeedText()
     {
-        _SetLvlText1( _fireFighterDroneUpg._GetBasicStats()._speedLvl);
+        SetLvlText1( fireFighterDroneUpg.GetBasicStats().speedLvl );
     }
 
-    private void _UpdateFirefighterDrAmmoText()
+    private void UpdateFirefighterDrAmmoText()
     {
-        _SetLvlText2( _fireFighterDroneUpg._FireFighterDroneLevels._ammoLvl);
+        SetLvlText2( fireFighterDroneUpg.FireFighterDroneLevels.ammoLvl );
     }
 
-    private void _UpdateFirefighterDrExtSizeText()
+    private void UpdateFirefighterDrExtSizeText()
     {
-        _SetLvlText3( _fireFighterDroneUpg._FireFighterDroneLevels._sizeOfExtincionLvl);
+        SetLvlText3( fireFighterDroneUpg.FireFighterDroneLevels.sizeOfExtincionLvl );
     }
     #endregion
 
     #region Ambulance drone
 
-    public void _ActivateAmbulanceDroneUpgrades()
+    public void ActivateAmbulanceDroneUpgrades()
     {
-        _UpdateMoneyAndPoints( _ambulaceDroneUpg );
+        UpdateMoneyAndPoints( ambulaceDroneUpg );
 
-        _SetActiveButtons( _lvlTexts, 0 );
-        _SetActiveButtons( _lvlTexts, 3, false );
-        _RemoveAllListenersFromButtons( _upButtons );
-        _RemoveAllListenersFromButtons( _downButtons );
+        SetActiveButtons( lvlTexts, 0 );
+        SetActiveButtons( lvlTexts, 3, false );
+        RemoveAllListenersFromButtons( upButtons );
+        RemoveAllListenersFromButtons( downButtons );
 
-        _upButtons[ 0 ].onClick.AddListener( new UnityAction( _IncreaseArmorAmbDrone ) );
-        _upButtons[ 1 ].onClick.AddListener( new UnityAction( _IncreaseSpeedAmbDrone ) );
-        _upButtons[ 2 ].onClick.AddListener( new UnityAction( _IncreaseSlowDownDyingLevel ) );
+        upButtons[ 0 ].onClick.AddListener( new UnityAction( IncreaseArmorAmbDrone ) );
+        upButtons[ 1 ].onClick.AddListener( new UnityAction( IncreaseSpeedAmbDrone ) );
+        upButtons[ 2 ].onClick.AddListener( new UnityAction( IncreaseSlowDownDyingLevel ) );
 
-        _downButtons[ 0 ].onClick.AddListener( new UnityAction( _DecreaseArmorAmbDrone ) );
-        _downButtons[ 1 ].onClick.AddListener( new UnityAction( _DecreaseSpeedAmbDrone ) );
-        _downButtons[ 2 ].onClick.AddListener( new UnityAction( _DecreaseSlowDownDyingLevel ) );
+        downButtons[ 0 ].onClick.AddListener( new UnityAction( DecreaseArmorAmbDrone ) );
+        downButtons[ 1 ].onClick.AddListener( new UnityAction( DecreaseSpeedAmbDrone ) );
+        downButtons[ 2 ].onClick.AddListener( new UnityAction( DecreaseSlowDownDyingLevel ) );
 
-        _footersTexts[ 0 ].text = "Armor";
-        _footersTexts[ 1 ].text = "Speed";
-        _footersTexts[ 2 ].text = "Slowing down dying of victim";
+        footersTexts[ 0 ].text = "Armor";
+        footersTexts[ 1 ].text = "Speed";
+        footersTexts[ 2 ].text = "Slowing down dying of victim";
 
-        _UpdateAmbulanceDrArmorText();
-        _UpdateAmbulanceDrSpeedText();
-        _UpdateAmbulanceDrSlowDownText();
+        UpdateAmbulanceDrArmorText();
+        UpdateAmbulanceDrSpeedText();
+        UpdateAmbulanceDrSlowDownText();
 
 
-        _upgEngButton.gameObject.SetActive( true );
-        _decreaseTimeButton.gameObject.SetActive( true );
-        _upgEngButton.onClick.RemoveAllListeners();
-        _decreaseTimeButton.onClick.RemoveAllListeners();
-        _upgEngButton.onClick.AddListener( new UnityAction( _UpgradeEngineAmbDrone ) );
-        _decreaseTimeButton.onClick.AddListener( new UnityAction( _UpgradeShorteningTimeAmbDrone ) );
+        upgEngButton.gameObject.SetActive( true );
+        decreaseTimeButton.gameObject.SetActive( true );
+        upgEngButton.onClick.RemoveAllListeners();
+        decreaseTimeButton.onClick.RemoveAllListeners();
+        upgEngButton.onClick.AddListener( new UnityAction( UpgradeEngineAmbDrone ) );
+        decreaseTimeButton.onClick.AddListener( new UnityAction( UpgradeShorteningTimeAmbDrone ) );
 
-        _SetEngineLvlPriceAndBaseText( _ambulaceDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _ambulaceDroneUpg );
-        _SetDecreaseTimeAmountPriceAndBase( _ambulaceDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _ambulaceDroneUpg );
+        SetEngineLvlPriceAndBaseText( ambulaceDroneUpg );
+        SetupEnginePriceAndBaseActivation( ambulaceDroneUpg );
+        SetDecreaseTimeAmountPriceAndBase( ambulaceDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( ambulaceDroneUpg );
 
-        _extinctionButton.gameObject.SetActive( true );
-        _SetColorOfExtOnTargetButton( _ambulaceDroneUpg );
-        _extinctionButton.onClick.RemoveAllListeners();
-        _extinctionButton.onClick.AddListener( new UnityAction( _ToogleExtincionOnTargetSkillAmbDrone ) );
+        extinctionButton.gameObject.SetActive( true );
+        SetColorOfExtOnTargetButton( ambulaceDroneUpg );
+        extinctionButton.onClick.RemoveAllListeners();
+        extinctionButton.onClick.AddListener( new UnityAction( ToogleExtincionOnTargetSkillAmbDrone ) );
 
-        _SetExtOnTargetNeededPointsText( _ambulaceDroneUpg );
-        _SetExtOnTargetPriceAndSetupPointsAndPrice( _ambulaceDroneUpg );
+        SetExtOnTargetNeededPointsText( ambulaceDroneUpg );
+        SetExtOnTargetPriceAndSetupPointsAndPrice( ambulaceDroneUpg );
 
-        _droneImage.sprite = _ambDrSprite;
+        droneImage.sprite = ambDrSprite;
 
-        _RemoveAllListenersFromNav();
-        _nextButton.onClick.AddListener( new UnityAction( _ActivateSupplyDroneUpgrades ) );
-        _previousButton.onClick.AddListener( new UnityAction( _ActivateFirefighterDroneUpgrades ) );
+        RemoveAllListenersFromNav();
+        nextButton.onClick.AddListener( new UnityAction( ActivateSupplyDroneUpgrades ) );
+        previousButton.onClick.AddListener( new UnityAction( ActivateFirefighterDroneUpgrades ) );
     }
 
-    private void _UpdateAmbulanceDrArmorText()
+    private void UpdateAmbulanceDrArmorText()
     {
-        _SetLvlText0( _ambulaceDroneUpg._GetBasicStats()._armorLvl);
+        SetLvlText0( ambulaceDroneUpg.GetBasicStats().armorLvl );
     }
 
-    private void _UpdateAmbulanceDrSpeedText()
+    private void UpdateAmbulanceDrSpeedText()
     {
-        _SetLvlText1( _ambulaceDroneUpg._GetBasicStats()._speedLvl );
+        SetLvlText1( ambulaceDroneUpg.GetBasicStats().speedLvl );
     }
 
-    private void _UpdateAmbulanceDrSlowDownText()
+    private void UpdateAmbulanceDrSlowDownText()
     {
-        _SetLvlText2( _ambulaceDroneUpg._AmbulanceDroneLevels._slowDownDyingLevel);
+        SetLvlText2( ambulaceDroneUpg.AmbulanceDroneLevels.slowDownDyingLevel );
     }
     #endregion
 
     #region Supply drone
 
-    public void _ActivateSupplyDroneUpgrades()
+    public void ActivateSupplyDroneUpgrades()
     {
-        _UpdateMoneyAndPoints( _supplyDroneUpg );
+        UpdateMoneyAndPoints( supplyDroneUpg );
 
-        _SetActiveButtons( _lvlTexts, 0 );
-        _RemoveAllListenersFromButtons( _upButtons );
-        _RemoveAllListenersFromButtons( _downButtons );
+        SetActiveButtons( lvlTexts, 0 );
+        RemoveAllListenersFromButtons( upButtons );
+        RemoveAllListenersFromButtons( downButtons );
 
-        _upButtons[ 0 ].onClick.AddListener( new UnityAction( _IncreaseArmorSupDrone ) );
-        _upButtons[ 1 ].onClick.AddListener( new UnityAction( _IncreaseSpeedSupDrone ) );
-        _upButtons[ 2 ].onClick.AddListener( new UnityAction( _IncreaseSizeOfPackage ) );
-        _upButtons[ 3 ].onClick.AddListener( new UnityAction( _IncreaseArmorPackage ) );
+        upButtons[ 0 ].onClick.AddListener( new UnityAction( IncreaseArmorSupDrone ) );
+        upButtons[ 1 ].onClick.AddListener( new UnityAction( IncreaseSpeedSupDrone ) );
+        upButtons[ 2 ].onClick.AddListener( new UnityAction( IncreaseSizeOfPackage ) );
+        upButtons[ 3 ].onClick.AddListener( new UnityAction( IncreaseArmorPackage ) );
 
-        _downButtons[ 0 ].onClick.AddListener( new UnityAction( _DecreaseArmorSupDrone ) );
-        _downButtons[ 1 ].onClick.AddListener( new UnityAction( _DecreaseSpeedSupDrone ) );
-        _downButtons[ 2 ].onClick.AddListener( new UnityAction( _DecreaseSizeOfPackage ) );
-        _downButtons[ 3 ].onClick.AddListener( new UnityAction( _DecreaseArmorPackage ) );
+        downButtons[ 0 ].onClick.AddListener( new UnityAction( DecreaseArmorSupDrone ) );
+        downButtons[ 1 ].onClick.AddListener( new UnityAction( DecreaseSpeedSupDrone ) );
+        downButtons[ 2 ].onClick.AddListener( new UnityAction( DecreaseSizeOfPackage ) );
+        downButtons[ 3 ].onClick.AddListener( new UnityAction( DecreaseArmorPackage ) );
 
-        _footersTexts[ 0 ].text = "Armor";
-        _footersTexts[ 1 ].text = "Speed";
-        _footersTexts[ 2 ].text = "Package size";
-        _footersTexts[ 3 ].text = "Package armor";
+        footersTexts[ 0 ].text = "Armor";
+        footersTexts[ 1 ].text = "Speed";
+        footersTexts[ 2 ].text = "Package size";
+        footersTexts[ 3 ].text = "Package armor";
 
-        _UpdateSupplyDrArmorText();
-        _UpdateSupplyDrSpeedText();
-        _UpdateSupplyDrPackageSizeText();
-        _UpdateSupplyDrPackageArmorText();
+        UpdateSupplyDrArmorText();
+        UpdateSupplyDrSpeedText();
+        UpdateSupplyDrPackageSizeText();
+        UpdateSupplyDrPackageArmorText();
 
 
-        _upgEngButton.gameObject.SetActive( true );
-        _decreaseTimeButton.gameObject.SetActive( true );
-        _upgEngButton.onClick.RemoveAllListeners();
-        _decreaseTimeButton.onClick.RemoveAllListeners();
-        _upgEngButton.onClick.AddListener( new UnityAction( _UpgradeEngineSupDrone ) );
-        _decreaseTimeButton.onClick.AddListener( new UnityAction( _UpgradeShorteningTimeSupDrone ) );
+        upgEngButton.gameObject.SetActive( true );
+        decreaseTimeButton.gameObject.SetActive( true );
+        upgEngButton.onClick.RemoveAllListeners();
+        decreaseTimeButton.onClick.RemoveAllListeners();
+        upgEngButton.onClick.AddListener( new UnityAction( UpgradeEngineSupDrone ) );
+        decreaseTimeButton.onClick.AddListener( new UnityAction( UpgradeShorteningTimeSupDrone ) );
 
-        _SetEngineLvlPriceAndBaseText( _supplyDroneUpg );
-        _SetupEnginePriceAndBaseActivation( _supplyDroneUpg );
-        _SetDecreaseTimeAmountPriceAndBase( _supplyDroneUpg );
-        _SetupDecreaseTimePriceAndBaseActivation( _supplyDroneUpg );
+        SetEngineLvlPriceAndBaseText( supplyDroneUpg );
+        SetupEnginePriceAndBaseActivation( supplyDroneUpg );
+        SetDecreaseTimeAmountPriceAndBase( supplyDroneUpg );
+        SetupDecreaseTimePriceAndBaseActivation( supplyDroneUpg );
 
-        _extinctionButton.gameObject.SetActive( true );
-        _SetColorOfExtOnTargetButton( _supplyDroneUpg );
-        _extinctionButton.onClick.RemoveAllListeners();
-        _extinctionButton.onClick.AddListener( new UnityAction( _ToogleExtincionOnTargetSkillSupDrone ) );
+        extinctionButton.gameObject.SetActive( true );
+        SetColorOfExtOnTargetButton( supplyDroneUpg );
+        extinctionButton.onClick.RemoveAllListeners();
+        extinctionButton.onClick.AddListener( new UnityAction( ToogleExtincionOnTargetSkillSupDrone ) );
 
-        _SetExtOnTargetNeededPointsText( _supplyDroneUpg );
-        _SetExtOnTargetPriceAndSetupPointsAndPrice( _supplyDroneUpg );
+        SetExtOnTargetNeededPointsText( supplyDroneUpg );
+        SetExtOnTargetPriceAndSetupPointsAndPrice( supplyDroneUpg );
 
-        _droneImage.sprite = _supDrSprite;
+        droneImage.sprite = supDrSprite;
 
-        _RemoveAllListenersFromNav();
-        _previousButton.onClick.AddListener( new UnityAction( _ActivateAmbulanceDroneUpgrades ) );
+        RemoveAllListenersFromNav();
+        previousButton.onClick.AddListener( new UnityAction( ActivateAmbulanceDroneUpgrades ) );
     }
 
-    private void _UpdateSupplyDrArmorText()
+    private void UpdateSupplyDrArmorText()
     {
-        _SetLvlText0( _supplyDroneUpg._GetBasicStats()._armorLvl);
+        SetLvlText0( supplyDroneUpg.GetBasicStats().armorLvl );
     }
 
-    private void _UpdateSupplyDrSpeedText()
+    private void UpdateSupplyDrSpeedText()
     {
-        _SetLvlText1( _supplyDroneUpg._GetBasicStats()._speedLvl);
+        SetLvlText1( supplyDroneUpg.GetBasicStats().speedLvl );
     }
 
-    private void _UpdateSupplyDrPackageSizeText()
+    private void UpdateSupplyDrPackageSizeText()
     {
-        _SetLvlText2( _supplyDroneUpg._SupplyDroneLvls._sizeOfPackage );
+        SetLvlText2( supplyDroneUpg.SupplyDroneLvls.sizeOfPackage );
     }
 
-    private void _UpdateSupplyDrPackageArmorText()
+    private void UpdateSupplyDrPackageArmorText()
     {
-        _SetLvlText3( _supplyDroneUpg._SupplyDroneLvls._armorOfPackage );
+        SetLvlText3( supplyDroneUpg.SupplyDroneLvls.armorOfPackage );
     }
 
     #endregion
