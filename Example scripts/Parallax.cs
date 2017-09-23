@@ -5,141 +5,142 @@ using MyDataTypes;
 using MyMethods;
 using System;
 
-#if UNITY_EDITOR
+#if UNITYEDITOR
 [ExecuteInEditMode]
 #endif
-public class Parallax : MonoBehaviour {
-#if UNITY_EDITOR
-    public bool _save;
-    public bool _load;
-    public bool _saved;
+public class Parallax : MonoBehaviour
+{
+#if UNITYEDITOR
+    public bool save;
+    public bool load;
+    public bool saved;
 
-    public bool _activeDebugLog;
+    public bool activeDebugLog;
 
-    public List<float> _parallaxScales;
+    public List<float> parallaxScales;
 #endif
-    public List<Transform> _backgrounds;
-    public float _limit = 10f;
+    public List<Transform> backgrounds;
+    public float limit = 10f;
 
-    private Transform _cam;
-    public Vector2 _middle;
-    private Vector2 _vectorToCamera;
+    private Transform cam;
+    public Vector2 middle;
+    private Vector2 vectorToCamera;
 
-    public ParallaxSector[] _parSecArray;
-    public List<List<float>> _parallaxScalesV2 = new List<List<float>>();
-    public List<int> _activeSectors = new List<int>();
-    public List<List<Transform>> _layersTrans = new List<List<Transform>>();
+    public ParallaxSector[] parSecArray;
+    public List<List<float>> parallaxScalesV2 = new List<List<float>>();
+    public List<int> activeSectors = new List<int>();
+    public List<List<Transform>> layersTrans = new List<List<Transform>>();
 
     void Awake()
     {
-        _cam = Camera.main.transform;
-        _backgrounds.RemoveRange(0, _backgrounds.Count);
+        cam = Camera.main.transform;
+        backgrounds.RemoveRange( 0, backgrounds.Count );
         for ( int id = 0 ; id < transform.childCount ; id++ )
         {
-            for ( int id_2 = 0 ; id_2 < transform.GetChild(id).childCount ; id_2++ )
+            for ( int id2 = 0 ; id2 < transform.GetChild( id ).childCount ; id2++ )
             {
-                _backgrounds.Add( transform.GetChild( id ).GetChild( id_2 ) );
+                backgrounds.Add( transform.GetChild( id ).GetChild( id2 ) );
             }
         }
     }
 
     void Start()
     {
-#if UNITY_EDITOR
-        CSV_Reader __csvReader = GameObject.FindGameObjectWithTag("Ground colliders").GetComponent<CSV_Reader>();
-        sbyte[,] __csvMap = __csvReader._GetValues();
-        _middle.x = __csvMap.GetLength( 1 );
-        _middle.y = __csvMap.GetLength( 0 );
+#if UNITYEDITOR
+        CSVReader csvReader = GameObject.FindGameObjectWithTag("Ground colliders").GetComponent<CSVReader>();
+        sbyte[,] csvMap = csvReader.GetValues();
+        middle.x = csvMap.GetLength( 1 );
+        middle.y = csvMap.GetLength( 0 );
 #else
-        _middle.x = CSV_Reader._csv_Reader._csvMap.GetLength( 1 );
-        _middle.y = CSV_Reader._csv_Reader._csvMap.GetLength( 0 );
+        middle.x = CSVReader.csvReader.csvMap.GetLength( 1 );
+        middle.y = CSVReader.csvReader.csvMap.GetLength( 0 );
 #endif
-        _middle.x = _middle.x / 2;
-        _middle.y = -( _middle.y / 2 );
-        
+        middle.x = middle.x / 2;
+        middle.y = -( middle.y / 2 );
+
         if ( Application.isPlaying )
         {
-            _CalculateScales();
+            CalculateScales();
 
-            _CreateLayersTrans();
+            CreateLayersTrans();
 
-            _AddMarginToParSectAreas();
+            AddMarginToParSectAreas();
         }
         else
         {
-#if UNITY_EDITOR
-            _parallaxScales.RemoveRange( 0, _parallaxScales.Count );
-            for ( int id = 0 ; id < _backgrounds.Count ; id++ )
+#if UNITYEDITOR
+            parallaxScales.RemoveRange( 0, parallaxScales.Count );
+            for ( int id = 0 ; id < backgrounds.Count ; id++ )
             {
-                _parallaxScales.Add( _backgrounds[ id ].transform.position.z / _limit );
+                parallaxScales.Add( backgrounds[ id ].transform.position.z / limit );
             }
 #endif
         }
     }
 
-    private void _CalculateScales()
+    private void CalculateScales()
     {
-        for ( int id = 0 ; id < _parSecArray.GetLength( 0 ) ; id++ )
+        for ( int id = 0 ; id < parSecArray.GetLength( 0 ) ; id++ )
         {
-            _parallaxScalesV2.Add( new List<float>() );
-            
-            for ( int id_1 = 0 ; id_1 < _parSecArray[ id ].myLayers.Count ; id_1++ )
+            parallaxScalesV2.Add( new List<float>() );
+
+            for ( int id1 = 0 ; id1 < parSecArray[ id ].myLayers.Count ; id1++ )
             {
-                _parallaxScalesV2[ id ].Add( _parSecArray[ id ].myLayers[ id_1 ].z / _limit );
+                parallaxScalesV2[ id ].Add( parSecArray[ id ].myLayers[ id1 ].z / limit );
             }
         }
     }
 
-    private void _CreateLayersTrans()
+    private void CreateLayersTrans()
     {
-        for ( int id = 0 ; id < _parSecArray.GetLength( 0 ) ; id++ )
+        for ( int id = 0 ; id < parSecArray.GetLength( 0 ) ; id++ )
         {
-            _parSecArray[ id ].layersTrans.RemoveRange( 0, _parSecArray[ id ].layersTrans.Count );
-            for ( int id_2 = 0 ; id_2 < _parSecArray[ id ].myLayers.Count ; id_2++ )
+            parSecArray[ id ].layersTrans.RemoveRange( 0, parSecArray[ id ].layersTrans.Count );
+            for ( int id2 = 0 ; id2 < parSecArray[ id ].myLayers.Count ; id2++ )
             {
-                _parSecArray[ id ].layersTrans.Add( new GameObject().transform );
-#if UNITY_EDITOR
-                _parSecArray[ id ].layersTrans[ id_2 ].name = id_2.ToString();
+                parSecArray[ id ].layersTrans.Add( new GameObject().transform );
+#if UNITYEDITOR
+                parSecArray[ id ].layersTrans[ id2 ].name = id2.ToString();
 #endif
             }
         }
     }
 
-    void _AddMarginToParSectAreas()
+    void AddMarginToParSectAreas()
     {
-        int __yMargin = (int)_cam.GetComponent<Camera>().orthographicSize;
-        
-        var _cameraSize = (byte)_cam.GetComponent<Camera>().orthographicSize;
-        var _heightOfScreen = (float)( _cameraSize * 2 );
-        var _widthOfScreen = ( (float)( Screen.width ) / (float)( Screen.height ) ) * _heightOfScreen;
-        
-        int __xMargin = (short)( Mathf.Round( _widthOfScreen / 2 ) );
+        int yMargin = (int)cam.GetComponent<Camera>().orthographicSize;
 
-        for ( int __sectorId = 0 ; __sectorId < _parSecArray.GetLength(0) ; __sectorId++ )
+        var cameraSize = (byte)cam.GetComponent<Camera>().orthographicSize;
+        var heightOfScreen = (float)( cameraSize * 2 );
+        var widthOfScreen = ( (float)( Screen.width ) / (float)( Screen.height ) ) * heightOfScreen;
+
+        int xMargin = (short)( Mathf.Round( widthOfScreen / 2 ) );
+
+        for ( int sectorId = 0 ; sectorId < parSecArray.GetLength( 0 ) ; sectorId++ )
         {
-            var __area =  _parSecArray[__sectorId].area;
-            var __maxZ = _FindFarthestLayerZ_value( _parSecArray[ __sectorId ].myLayers );
-            
-            float __calculation = ((_limit - __maxZ) / _limit);
-            if ( __calculation <= 0 ) __calculation = 0.1f;
-            
-            float __correctedX_margin = (__xMargin / __calculation) + 2;
-            float __correctedY_margin = (__yMargin / __calculation) + 2;
-            _parSecArray[ __sectorId ].area = new AreaV2( __area.x_Left - __correctedX_margin, __area.y_Top + __correctedY_margin, __area.x_Right + __correctedX_margin, __area.y_Bottom - __correctedY_margin );
+            var area =  parSecArray[sectorId].area;
+            var maxZ = FindFarthestLayerZvalue( parSecArray[ sectorId ].myLayers );
+
+            float calculation = ((limit - maxZ) / limit);
+            if ( calculation <= 0 ) calculation = 0.1f;
+
+            float correctedXmargin = (xMargin / calculation) + 2;
+            float correctedYmargin = (yMargin / calculation) + 2;
+            parSecArray[ sectorId ].area = new AreaV2( area.xLeft - correctedXmargin, area.yTop + correctedYmargin, area.xRight + correctedXmargin, area.yBottom - correctedYmargin );
         }
     }
 
-    float _FindFarthestLayerZ_value(List<MyLayer> __layersList)
+    float FindFarthestLayerZvalue( List<MyLayer> layersList )
     {
-        float __maxZ = 0;
-        for ( int __layerId = 0 ; __layerId < __layersList.Count ; __layerId++ )
+        float maxZ = 0;
+        for ( int layerId = 0 ; layerId < layersList.Count ; layerId++ )
         {
-            if ( __layersList[ __layerId ].z > __maxZ ) __maxZ = __layersList[ __layerId ].z;
+            if ( layersList[ layerId ].z > maxZ ) maxZ = layersList[ layerId ].z;
         }
-        return __maxZ;
+        return maxZ;
     }
 
-#if UNITY_EDITOR
+#if UNITYEDITOR
     private void OnEnable()
     {
         if ( !Application.isPlaying )
@@ -149,248 +150,249 @@ public class Parallax : MonoBehaviour {
         }
     }
 
-    void _SaveSectors_inEditor()
+    void SaveSectorsinEditor()
     {
-        _parSecArray = new ParallaxSector[ 0 ];
-        _parSecArray = new ParallaxSector[ transform.childCount ];
-        for ( int __sectorId = 0 ; __sectorId < transform.childCount ; __sectorId++ )
+        parSecArray = new ParallaxSector[ 0 ];
+        parSecArray = new ParallaxSector[ transform.childCount ];
+        for ( int sectorId = 0 ; sectorId < transform.childCount ; sectorId++ )
         {
-            BoxCollider2D __secBox2D = transform.GetChild(__sectorId).GetComponent<BoxCollider2D>();
-            float __x = __secBox2D.size.x / 2;
-            float __y = __secBox2D.size.y / 2;
-            Vector2 __secPos = __secBox2D.transform.position;
-            _parSecArray[ __sectorId ].area = new AreaV2( __secPos.x - __x, __secPos.y + __y, __secPos.x + __x, __secPos.y - __y );
-            _parSecArray[ __sectorId ].myLayers = new List<MyLayer>();
-            for ( int __layerId = 0 ; __layerId < transform.GetChild(__sectorId).childCount ; __layerId++ )
+            BoxCollider2D secBox2D = transform.GetChild(sectorId).GetComponent<BoxCollider2D>();
+            float x = secBox2D.size.x / 2;
+            float y = secBox2D.size.y / 2;
+            Vector2 secPos = secBox2D.transform.position;
+            parSecArray[ sectorId ].area = new AreaV2( secPos.x - x, secPos.y + y, secPos.x + x, secPos.y - y );
+            parSecArray[ sectorId ].myLayers = new List<MyLayer>();
+            for ( int layerId = 0 ; layerId < transform.GetChild(sectorId).childCount ; layerId++ )
             {
-                _parSecArray[ __sectorId ].myLayers.Add( new MyLayer( transform.GetChild( __sectorId ).GetChild(__layerId).transform.position.z, Methods._GiveFilledListOfVector2Wrappers( DeadPoolHandler._DP_Handler._bgObjPrefabs.GetLength( 0 ) ) ) );
+                parSecArray[ sectorId ].myLayers.Add( new MyLayer( transform.GetChild( sectorId ).GetChild(layerId).transform.position.z, Methods.GiveFilledListOfVector2Wrappers( DeadPoolHandler.DPHandler.bgObjPrefabs.GetLength( 0 ) ) ) );
 
-                for ( int __objectId = 0 ; __objectId < transform.GetChild(__sectorId).GetChild(__layerId).childCount ; __objectId++ )
+                for ( int objectId = 0 ; objectId < transform.GetChild(sectorId).GetChild(layerId).childCount ; objectId++ )
                 {
-                    BgObject __bgObject = transform.GetChild( __sectorId ).GetChild( __layerId ).GetChild( __objectId ).GetComponent<BgObject>();
+                    BgObject bgObject = transform.GetChild( sectorId ).GetChild( layerId ).GetChild( objectId ).GetComponent<BgObject>();
                   
-                    _parSecArray[ __sectorId ].myLayers[ __layerId ].positions[ __bgObject._id ].list.Add( __bgObject.transform.localPosition );
+                    parSecArray[ sectorId ].myLayers[ layerId ].positions[ bgObject.id ].list.Add( bgObject.transform.localPosition );
                 }
             }
         }
         UnityEditor.EditorUtility.SetDirty( this );
 
-        Methods._KillAllChildren( transform );
+        Methods.KillAllChildren( transform );
     }
 
-    void _LoadSectors_inEditor()
+    void LoadSectorsinEditor()
     {
-        for ( int __sectorId = 0 ; __sectorId < _parSecArray.GetLength( 0 ) ; __sectorId++ )
+        for ( int sectorId = 0 ; sectorId < parSecArray.GetLength( 0 ) ; sectorId++ )
         {
-            Transform __sectorTrans = new GameObject("Sector " + __sectorId).transform;
-            __sectorTrans.transform.SetParent( transform );
-            BoxCollider2D __secBox2D = __sectorTrans.gameObject.AddComponent<BoxCollider2D>();
-            float __x = _parSecArray[ __sectorId ].area.x_Right - _parSecArray[ __sectorId ].area.x_Left;
-            float __y = _parSecArray[ __sectorId ].area.y_Top - _parSecArray[ __sectorId ].area.y_Bottom;
-            __secBox2D.size = new Vector2( __x, __y );
-            __sectorTrans.transform.position = new Vector2( _parSecArray[ __sectorId ].area.x_Left + __x / 2, _parSecArray[ __sectorId ].area.y_Top - __y / 2 );
+            Transform sectorTrans = new GameObject("Sector " + sectorId).transform;
+            sectorTrans.transform.SetParent( transform );
+            BoxCollider2D secBox2D = sectorTrans.gameObject.AddComponent<BoxCollider2D>();
+            float x = parSecArray[ sectorId ].area.xRight - parSecArray[ sectorId ].area.xLeft;
+            float y = parSecArray[ sectorId ].area.yTop - parSecArray[ sectorId ].area.yBottom;
+            secBox2D.size = new Vector2( x, y );
+            sectorTrans.transform.position = new Vector2( parSecArray[ sectorId ].area.xLeft + x / 2, parSecArray[ sectorId ].area.yTop - y / 2 );
             
-            for ( int __layerId = 0 ; __layerId < _parSecArray[ __sectorId ].myLayers.Count ; __layerId++ )
+            for ( int layerId = 0 ; layerId < parSecArray[ sectorId ].myLayers.Count ; layerId++ )
             {
-                Transform __layerTransform = new GameObject("Layer " + __layerId).transform;
-                __layerTransform.SetParent( __sectorTrans );
-                __layerTransform.transform.position = new Vector3( 100, -100, _parSecArray[ __sectorId ].myLayers[ __layerId ].z );
-                for ( int __objectId = 0 ; __objectId < DeadPoolHandler._DP_Handler._bgObjEditorPrefabs.GetLength( 0 ) ; __objectId++ )
+                Transform layerTransform = new GameObject("Layer " + layerId).transform;
+                layerTransform.SetParent( sectorTrans );
+                layerTransform.transform.position = new Vector3( 100, -100, parSecArray[ sectorId ].myLayers[ layerId ].z );
+                for ( int objectId = 0 ; objectId < DeadPoolHandler.DPHandler.bgObjEditorPrefabs.GetLength( 0 ) ; objectId++ )
                 {
-                    for ( int __objectPosId = 0 ; __objectPosId < _parSecArray[ __sectorId ].myLayers[ __layerId ].positions[ __objectId ].list.Count ; __objectPosId++ )
+                    for ( int objectPosId = 0 ; objectPosId < parSecArray[ sectorId ].myLayers[ layerId ].positions[ objectId ].list.Count ; objectPosId++ )
                     {
-                        Transform __bgObjectTransform = Instantiate(DeadPoolHandler._DP_Handler._bgObjEditorPrefabs[__objectId], __layerTransform).transform;
-                        __bgObjectTransform.localPosition = _parSecArray[ __sectorId ].myLayers[ __layerId ].positions[ __objectId ].list[ __objectPosId ];
+                        Transform bgObjectTransform = Instantiate(DeadPoolHandler.DPHandler.bgObjEditorPrefabs[objectId], layerTransform).transform;
+                        bgObjectTransform.localPosition = parSecArray[ sectorId ].myLayers[ layerId ].positions[ objectId ].list[ objectPosId ];
                     }
                 }
             }
         }
         OnEnable();
-        _load = false;
+        load = false;
         Update();
         UnityEditor.EditorUtility.SetDirty( this );
     }
 #endif
 
-    void Update () {
+    void Update()
+    {
         if ( Application.isPlaying )
         {
-            _CheckCollision();
-            _Parallax();
-#if UNITY_EDITOR
-            if ( _activeDebugLog )
-                _DrawParSecAreas();
+            CheckCollision();
+            Parallax();
+#if UNITYEDITOR
+            if ( activeDebugLog )
+                DrawParSecAreas();
 #endif
         }
-#if UNITY_EDITOR
+#if UNITYEDITOR
         else
-            _Parallax_InEditor();
+            ParallaxInEditor();
 #endif
 
-#if UNITY_EDITOR
-        if ( _save && !_saved )
+#if UNITYEDITOR
+        if ( save && !saved )
         {
-            _SaveSectors_inEditor();
-            _save = false;
-            _load = false;
-            _saved = true;
+            SaveSectorsinEditor();
+            save = false;
+            load = false;
+            saved = true;
         }
-        else if( _load && _saved )
+        else if( load && saved )
         {
-            _LoadSectors_inEditor();
-            _save = false;
-            _load = false;
-            _saved = false;
+            LoadSectorsinEditor();
+            save = false;
+            load = false;
+            saved = false;
         }
 #endif
     }
 
-#if UNITY_EDITOR
-    private void _DrawParSecAreas()
+#if UNITYEDITOR
+    private void DrawParSecAreas()
     {
-        for ( int __sectorId = 0 ; __sectorId < _parSecArray.GetLength( 0 ) ; __sectorId++ )
+        for ( int sectorId = 0 ; sectorId < parSecArray.GetLength( 0 ) ; sectorId++ )
         {
-            Methods._DrawSquare( _parSecArray[ __sectorId ].area );
+            Methods.DrawSquare( parSecArray[ sectorId ].area );
         }
     }
 
-    void _Parallax_InEditor()
+    void ParallaxInEditor()
     {
-        if ( _backgrounds.Count > 0 && !_backgrounds[ 0 ] ) return;
-        _vectorToCamera = (Vector2)_cam.position - _middle;
-        for ( int id = 0 ; id < _backgrounds.Count ; id++ )
+        if ( backgrounds.Count > 0 && !backgrounds[ 0 ] ) return;
+        vectorToCamera = (Vector2)cam.position - middle;
+        for ( int id = 0 ; id < backgrounds.Count ; id++ )
         {
 
-            Vector2 __newPos = _middle + _vectorToCamera * _parallaxScales[ id ];
-            _backgrounds[ id ].position = new Vector3( __newPos.x, __newPos.y, _backgrounds[ id ].position.z );
+            Vector2 newPos = middle + vectorToCamera * parallaxScales[ id ];
+            backgrounds[ id ].position = new Vector3( newPos.x, newPos.y, backgrounds[ id ].position.z );
         }
     }
 
 #endif
 
-    void _Parallax()
+    void Parallax()
     {
-        _vectorToCamera = (Vector2)_cam.position - _middle;
-        if ( _activeSectors.Count > 0 )
+        vectorToCamera = (Vector2)cam.position - middle;
+        if ( activeSectors.Count > 0 )
         {
-            for ( int id = 0 ; id < _activeSectors.Count ; id++ )
+            for ( int id = 0 ; id < activeSectors.Count ; id++ )
             {
-                for ( int id_2 = 0 ; id_2 < _parSecArray[ _activeSectors[ id ] ].layersTrans.Count ; id_2++ )
+                for ( int id2 = 0 ; id2 < parSecArray[ activeSectors[ id ] ].layersTrans.Count ; id2++ )
                 {
-                    Vector2 __newPos = _middle + _vectorToCamera * _parallaxScalesV2[ _activeSectors[ id ] ][ id_2 ];
-                    _parSecArray[ _activeSectors[ id ] ].layersTrans[ id_2 ].position = new Vector3( __newPos.x, __newPos.y, _parSecArray[ _activeSectors[ id ] ].myLayers[ id_2 ].z );
+                    Vector2 newPos = middle + vectorToCamera * parallaxScalesV2[ activeSectors[ id ] ][ id2 ];
+                    parSecArray[ activeSectors[ id ] ].layersTrans[ id2 ].position = new Vector3( newPos.x, newPos.y, parSecArray[ activeSectors[ id ] ].myLayers[ id2 ].z );
                 }
             }
         }
     }
 
-    void _CheckCollision()
+    void CheckCollision()
     {
-        for ( int id = 0 ; id < _parSecArray.GetLength(0) ; id++ )
+        for ( int id = 0 ; id < parSecArray.GetLength( 0 ) ; id++ )
         {
-            if ( !_parSecArray[ id ].inside )
-                if ( _CheckCollisionWithArea( _parSecArray[ id ].area ) )
+            if ( !parSecArray[ id ].inside )
+                if ( CheckCollisionWithArea( parSecArray[ id ].area ) )
                 {
-                    _activeSectors.Add( id );
-                    _parSecArray[ id ].id = _activeSectors.Count - 1;
-                    _parSecArray[ id ].inside = true;
-                    _GenerateSectorLayers( id );
+                    activeSectors.Add( id );
+                    parSecArray[ id ].id = activeSectors.Count - 1;
+                    parSecArray[ id ].inside = true;
+                    GenerateSectorLayers( id );
                 }
                 else
                     continue;
-            else if ( !_CheckCollisionWithArea( _parSecArray[ id ].area ) )
+            else if ( !CheckCollisionWithArea( parSecArray[ id ].area ) )
             {
-                _parSecArray[ id ].inside = false;
+                parSecArray[ id ].inside = false;
 
-                if ( _parSecArray[ id ].id == _activeSectors.Count - 1 )
+                if ( parSecArray[ id ].id == activeSectors.Count - 1 )
                 {
-                    _activeSectors.RemoveAt( _parSecArray[ id ].id );
-                    _GiveBackBgObjectsToPool( id );
+                    activeSectors.RemoveAt( parSecArray[ id ].id );
+                    GiveBackBgObjectsToPool( id );
                 }
                 else
                 {
-                    _activeSectors.RemoveAt( _parSecArray[ id ].id );
-                    _GiveBackBgObjectsToPool( id );
-                    for ( int id_2 = _parSecArray[ id ].id ; id_2 < _activeSectors.Count ; id_2++ )
+                    activeSectors.RemoveAt( parSecArray[ id ].id );
+                    GiveBackBgObjectsToPool( id );
+                    for ( int id2 = parSecArray[ id ].id ; id2 < activeSectors.Count ; id2++ )
                     {
-                        _parSecArray[ _activeSectors[ id_2 ] ].id--;
+                        parSecArray[ activeSectors[ id2 ] ].id--;
                     }
                 }
             }
         }
     }
 
-    void _GiveBackBgObjectsToPool( int __id )
+    void GiveBackBgObjectsToPool( int id )
     {
-        for ( int __objectsListId = 0 ; __objectsListId < _parSecArray[ __id ].localBgObjectsBank.Count ; __objectsListId++ )
+        for ( int objectsListId = 0 ; objectsListId < parSecArray[ id ].localBgObjectsBank.Count ; objectsListId++ )
         {
-            for ( int __objectId = 0 ; __objectId < _parSecArray[ __id ].localBgObjectsBank[ __objectsListId ].list.Count ; __objectId++ )
+            for ( int objectId = 0 ; objectId < parSecArray[ id ].localBgObjectsBank[ objectsListId ].list.Count ; objectId++ )
             {
-                DeadPoolHandler._DP_Handler._bgObjPools[ __objectsListId ].Add( _parSecArray[ __id ].localBgObjectsBank[ __objectsListId ].list[ __objectId ] );
-                _parSecArray[ __id ].localBgObjectsBank[ __objectsListId ].list[ __objectId ].gameObject.SetActive( false );
+                DeadPoolHandler.DPHandler.bgObjPools[ objectsListId ].Add( parSecArray[ id ].localBgObjectsBank[ objectsListId ].list[ objectId ] );
+                parSecArray[ id ].localBgObjectsBank[ objectsListId ].list[ objectId ].gameObject.SetActive( false );
             }
 
-            _parSecArray[ __id ].localBgObjectsBank[ __objectsListId ].list.RemoveRange( 0, _parSecArray[ __id ].localBgObjectsBank[ __objectsListId ].list.Count );
+            parSecArray[ id ].localBgObjectsBank[ objectsListId ].list.RemoveRange( 0, parSecArray[ id ].localBgObjectsBank[ objectsListId ].list.Count );
         }
     }
 
-    void _GenerateSectorLayers( int __id )
+    void GenerateSectorLayers( int id )
     {
-        _parSecArray[ __id ].localBgObjectsBank = new List<ListStTransformWrapper>();
-        for ( int __layerId = 0 ; __layerId < _parSecArray[ __id ].layersTrans.Count ; __layerId++ )
+        parSecArray[ id ].localBgObjectsBank = new List<ListStTransformWrapper>();
+        for ( int layerId = 0 ; layerId < parSecArray[ id ].layersTrans.Count ; layerId++ )
         {
-            for ( int __objectId = 0 ; __objectId < DeadPoolHandler._DP_Handler._bgObjPrefabs.GetLength( 0 ) ; __objectId++ )
+            for ( int objectId = 0 ; objectId < DeadPoolHandler.DPHandler.bgObjPrefabs.GetLength( 0 ) ; objectId++ )
             {
-                _parSecArray[ __id ].localBgObjectsBank.Add( new ListStTransformWrapper( true ) );
-                bool __poolIsEmpty = false;
-                for ( int __objectPosId = 0 ; __objectPosId < _parSecArray[ __id ].myLayers[ __layerId ].positions[ __objectId ].list.Count ; __objectPosId++ )
+                parSecArray[ id ].localBgObjectsBank.Add( new ListStTransformWrapper( true ) );
+                bool poolIsEmpty = false;
+                for ( int objectPosId = 0 ; objectPosId < parSecArray[ id ].myLayers[ layerId ].positions[ objectId ].list.Count ; objectPosId++ )
                 {
-                    if ( !__poolIsEmpty )
+                    if ( !poolIsEmpty )
                     {
-                        if ( DeadPoolHandler._DP_Handler._bgObjPools[ __objectId ].Count != 0 ) // Taking from the pool
+                        if ( DeadPoolHandler.DPHandler.bgObjPools[ objectId ].Count != 0 ) // Taking from the pool
                         {
-                            Transform __bgObjectTrans = DeadPoolHandler._DP_Handler._bgObjPools[__objectId][0];
-                            DeadPoolHandler._DP_Handler._bgObjPools[ __objectId ].RemoveAt( 0 );
-                            __bgObjectTrans.SetParent( _parSecArray[ __id ].layersTrans[ __layerId ] );
-                            __bgObjectTrans.localPosition = _parSecArray[ __id ].myLayers[ __layerId ].positions[ __objectId ].list[ __objectPosId ];
-                            __bgObjectTrans.gameObject.SetActive( true );
-                            
-                            _parSecArray[ __id ].localBgObjectsBank[ __objectId ].list.Add( __bgObjectTrans );
+                            Transform bgObjectTrans = DeadPoolHandler.DPHandler.bgObjPools[objectId][0];
+                            DeadPoolHandler.DPHandler.bgObjPools[ objectId ].RemoveAt( 0 );
+                            bgObjectTrans.SetParent( parSecArray[ id ].layersTrans[ layerId ] );
+                            bgObjectTrans.localPosition = parSecArray[ id ].myLayers[ layerId ].positions[ objectId ].list[ objectPosId ];
+                            bgObjectTrans.gameObject.SetActive( true );
+
+                            parSecArray[ id ].localBgObjectsBank[ objectId ].list.Add( bgObjectTrans );
                         }
                         else // Creating new object
                         {
-                            _CreatA_newBgObject( __id, __layerId, __objectId, __objectPosId );
-                            __poolIsEmpty = true;
+                            CreatAnewBgObject( id, layerId, objectId, objectPosId );
+                            poolIsEmpty = true;
                         }
                     }
                     else // Creating new object
                     {
-                        _CreatA_newBgObject( __id, __layerId, __objectId, __objectPosId );
+                        CreatAnewBgObject( id, layerId, objectId, objectPosId );
                     }
                 }
             }
         }
     }
 
-    private void _CreatA_newBgObject( int __id, int __layerId, int __objectId, int __objectPosId )
+    private void CreatAnewBgObject( int id, int layerId, int objectId, int objectPosId )
     {
-        Transform __bgObjectTrans = Instantiate(
-            DeadPoolHandler._DP_Handler._bgObjPrefabs[__objectId],
-            _parSecArray[ __id ].myLayers[ __layerId ].positions[ __objectId ].list[ __objectPosId ],
-            Quaternion.identity, _parSecArray[ __id ].layersTrans[ __layerId ]).transform;
-        
-        _parSecArray[ __id ].localBgObjectsBank[ __objectId ].list.Add( __bgObjectTrans );
+        Transform bgObjectTrans = Instantiate(
+            DeadPoolHandler.DPHandler.bgObjPrefabs[objectId],
+            parSecArray[ id ].myLayers[ layerId ].positions[ objectId ].list[ objectPosId ],
+            Quaternion.identity, parSecArray[ id ].layersTrans[ layerId ]).transform;
+
+        parSecArray[ id ].localBgObjectsBank[ objectId ].list.Add( bgObjectTrans );
     }
 
-    private bool _CheckCollisionWithArea( AreaV2 __area )
+    private bool CheckCollisionWithArea( AreaV2 area )
     {
-        if ( _cam.position.x < __area.x_Left )
+        if ( cam.position.x < area.xLeft )
             return false;
-        else if ( _cam.position.x > __area.x_Right )
+        else if ( cam.position.x > area.xRight )
             return false;
-        else if ( _cam.position.y > __area.y_Top )
+        else if ( cam.position.y > area.yTop )
             return false;
-        else if ( _cam.position.y < __area.y_Bottom )
+        else if ( cam.position.y < area.yBottom )
             return false;
         else
             return true;
